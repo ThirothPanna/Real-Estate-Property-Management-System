@@ -5,19 +5,72 @@
 @section('content')
 
     <style>
-        .status-badge {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
+        /* ---- Status badges ---- */
+        .status-badge { padding:4px 10px; border-radius:20px; font-size:12px; font-weight:600; }
         .status-resolved      { background:#dcfce7; color:#16a34a; }
         .status-in-progress   { background:#dbeafe; color:#2563eb; }
         .status-pending,
         .status-default       { background:#fef3c7; color:#d97706; }
         .status-completed     { background:#dcfce7; color:#16a34a; }
         .status-failed        { background:#fee2e2; color:#dc2626; }
+
+        /* ---- Success popup ---- */
+        .success-overlay {
+            position:fixed; inset:0; background:rgba(0,0,0,.45);
+            display:none; align-items:center; justify-content:center; z-index:900;
+        }
+        .success-overlay.show { display:flex; animation:fadeIn .3s ease; }
+        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+        .success-card {
+            background:#fff; border-radius:20px; padding:44px 48px;
+            text-align:center; max-width:420px; width:90%;
+            box-shadow:0 30px 80px rgba(0,0,0,.25);
+            animation:popIn .45s cubic-bezier(.34,1.56,.64,1);
+        }
+        @keyframes popIn {
+            from { transform:scale(.7); opacity:0; }
+            to   { transform:scale(1);  opacity:1; }
+        }
+        .success-ring {
+            width:96px; height:96px; border-radius:50%; background:#dcfce7;
+            display:flex; align-items:center; justify-content:center; margin:0 auto 20px;
+        }
+        .success-ring svg { width:56px; height:56px; }
+        .success-ring path {
+            stroke:#16a34a; stroke-width:4; fill:none;
+            stroke-linecap:round; stroke-linejoin:round;
+            stroke-dasharray:60; stroke-dashoffset:60;
+            animation:draw .5s .15s ease forwards;
+        }
+        @keyframes draw { to { stroke-dashoffset:0; } }
+        .success-title { font-size:22px; font-weight:700; color:#111827; margin-bottom:6px; }
+        .success-text { font-size:14px; color:#6b7280; margin-bottom:26px; }
+        .success-btn {
+            background:#22c55e; color:#fff; border:none;
+            padding:12px 28px; border-radius:10px; font-weight:700; font-size:15px; cursor:pointer;
+        }
+        .success-btn:hover { background:#16a34a; }
     </style>
+
+    {{-- ============ SUCCESS POPUP (after payment) ============ --}}
+    @if (session('payment_success'))
+        <div class="success-overlay show" id="successOverlayDash">
+            <div class="success-card">
+                <div class="success-ring">
+                    <svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div class="success-title">Payment Successful</div>
+                <div class="success-text">
+                    ${{ number_format(session('payment_success'), 2) }} has been recorded.
+                </div>
+                <button type="button" class="success-btn"
+                        onclick="document.getElementById('successOverlayDash').style.display='none'">
+                    Done
+                </button>
+            </div>
+        </div>
+    @endif
 
     @if (session('status'))
         <div style="background:#dcfce7; color:#16a34a; padding:12px 16px; border-radius:10px; margin-bottom:16px; font-size:14px;">
@@ -54,7 +107,7 @@
     </div>
 
     <div class="quick-actions">
-        <button class="btn btn-primary" onclick="openPaymentModal()">💳 Pay Rent</button>
+        <a href="{{ route('tenant.pay') }}" class="btn btn-primary">💳 Pay Rent</a>
         <button class="btn btn-outline" onclick="openRequestModal()">🛠 Submit Request</button>
         <button class="btn btn-outline">📄 View Lease</button>
         <button class="btn btn-outline">📊 Report Payment</button>
@@ -137,54 +190,6 @@
         <div class="lease-upload">📎 Click to upload lease documents</div>
     </div>
 
-    {{-- ============ PAYMENT MODAL ============ --}}
-    <div id="paymentModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:500; align-items:center; justify-content:center;">
-        <div style="background:#fff; border-radius:16px; width:100%; max-width:520px; padding:28px; box-shadow:0 20px 60px rgba(0,0,0,.25);">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h3 style="font-size:18px; margin:0;">Pay Rent</h3>
-                <button onclick="closePaymentModal()" style="background:none; border:none; cursor:pointer; font-size:22px; color:#6b7280; line-height:1;">&times;</button>
-            </div>
-
-            <form method="POST" action="{{ route('tenant.payments.store') }}">
-                @csrf
-
-                <div style="margin-bottom:16px;">
-                    <label style="display:block; font-size:12px; color:#6b7280; font-weight:600; text-transform:uppercase; margin-bottom:6px;">Amount (USD)</label>
-                    <input type="number" name="amount" step="0.01" min="1" required
-                           value="{{ old('amount') }}"
-                           placeholder="e.g. 1250.00"
-                           style="width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:10px; font-size:14px; outline:none;">
-                    @error('amount') <span style="color:#ef4444; font-size:12px;">{{ $message }}</span> @enderror
-                </div>
-
-                <div style="margin-bottom:16px;">
-                    <label style="display:block; font-size:12px; color:#6b7280; font-weight:600; text-transform:uppercase; margin-bottom:6px;">Payment Date</label>
-                    <input type="date" name="paid_on" required
-                           value="{{ old('paid_on', date('Y-m-d')) }}"
-                           style="width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:10px; font-size:14px; outline:none;">
-                    @error('paid_on') <span style="color:#ef4444; font-size:12px;">{{ $message }}</span> @enderror
-                </div>
-
-                <div style="margin-bottom:20px;">
-                    <label style="display:block; font-size:12px; color:#6b7280; font-weight:600; text-transform:uppercase; margin-bottom:6px;">Payment Method</label>
-                    <select name="method" required
-                            style="width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:10px; font-size:14px; outline:none; background:#fff;">
-                        <option value="card"          {{ old('method') === 'card'          ? 'selected' : '' }}>Card</option>
-                        <option value="bank_transfer" {{ old('method') === 'bank_transfer' ? 'selected' : '' }}>Bank Transfer</option>
-                        <option value="cash"          {{ old('method') === 'cash'          ? 'selected' : '' }}>Cash</option>
-                        <option value="paypal"        {{ old('method') === 'paypal'        ? 'selected' : '' }}>PayPal</option>
-                    </select>
-                    @error('method') <span style="color:#ef4444; font-size:12px;">{{ $message }}</span> @enderror
-                </div>
-
-                <div style="display:flex; gap:10px; justify-content:flex-end;">
-                    <button type="button" onclick="closePaymentModal()" class="btn btn-outline">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Record Payment</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     {{-- ============ REQUEST MODAL ============ --}}
     <div id="requestModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:500; align-items:center; justify-content:center;">
         <div style="background:#fff; border-radius:16px; width:100%; max-width:520px; padding:28px; box-shadow:0 20px 60px rgba(0,0,0,.25);">
@@ -232,21 +237,26 @@
         </div>
     </div>
 
+    {{-- ============ MODAL SCRIPTS ============ --}}
     <script>
-        function openPaymentModal()  { document.getElementById('paymentModal').style.display = 'flex'; }
-        function closePaymentModal() { document.getElementById('paymentModal').style.display = 'none'; }
         function openRequestModal()  { document.getElementById('requestModal').style.display = 'flex'; }
         function closeRequestModal() { document.getElementById('requestModal').style.display = 'none'; }
 
         document.addEventListener('DOMContentLoaded', function () {
-            ['paymentModal', 'requestModal'].forEach(function (id) {
-                var m = document.getElementById(id);
-                if (!m) return;
-                m.addEventListener('click', function (e) {
-                    if (e.target === m) m.style.display = 'none';
-                });
+            var m = document.getElementById('requestModal');
+            if (!m) return;
+            m.addEventListener('click', function (e) {
+                if (e.target === m) m.style.display = 'none';
             });
         });
     </script>
+
+    @if ($errors->any())
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                openRequestModal();
+            });
+        </script>
+    @endif
 
 @endsection
