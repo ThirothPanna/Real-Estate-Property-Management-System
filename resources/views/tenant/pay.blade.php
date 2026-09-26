@@ -7,7 +7,6 @@
         margin: 0 auto;
     }
 
-    /* ---- Progress bar ---- */
     .progress-labels {
         display: flex;
         gap: 16px;
@@ -41,7 +40,6 @@
         background: #22c55e;
     }
 
-    /* ---- Headings ---- */
     .pay-h2 {
         font-size: 22px;
         font-weight: 700;
@@ -63,7 +61,6 @@
         color: #111827;
     }
 
-    /* ---- Info boxes ---- */
     .pay-box {
         background: #fff;
         border: 1px solid #e5e7eb;
@@ -76,7 +73,6 @@
         gap: 24px;
     }
 
-    /* ---- Inputs ---- */
     .card-input {
         width: 100%;
         padding: 12px 14px;
@@ -118,66 +114,6 @@
         display: block;
     }
 
-    /* ---- Method selector ---- */
-    .method-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 14px;
-    }
-    .method-card {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        padding: 18px 12px;
-        border: 2px solid #e5e7eb;
-        border-radius: 14px;
-        cursor: pointer;
-        background: #fff;
-        transition:
-            border-color 0.15s,
-            background 0.15s,
-            transform 0.15s;
-        text-align: center;
-    }
-    .method-card:hover {
-        border-color: #22c55e;
-    }
-    .method-card.selected {
-        border-color: #22c55e;
-        background: #f0fdf4;
-        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);
-    }
-    .method-card .name {
-        font-size: 14px;
-        font-weight: 700;
-        color: #111827;
-    }
-    .method-card .sub {
-        font-size: 11px;
-        color: #6b7280;
-    }
-    .method-icon {
-        width: 44px;
-        height: 44px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #f3f4f6;
-    }
-    .method-icon.card {
-        background: #e0e7ff;
-    }
-    .method-icon.aba {
-        background: #fee2e2;
-    }
-    .method-icon.cash {
-        background: #dcfce7;
-    }
-
-    /* Mastercard mini icon */
     .mc {
         display: inline-flex;
     }
@@ -195,124 +131,6 @@
         margin-left: -6px;
     }
 
-    /* ---- ABA KHQR card ---- */
-    .khqr-card {
-        max-width: 380px;
-        margin: 0 auto;
-        background: #0f172a;
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
-    }
-    .khqr-banner {
-        background: #dc2626;
-        color: #fff;
-        padding: 18px 0;
-        text-align: center;
-        font-weight: 800;
-        font-size: 22px;
-        letter-spacing: 6px;
-        font-family: "Segoe UI", sans-serif;
-    }
-    .khqr-body {
-        padding: 26px 26px 30px;
-    }
-    .khqr-name {
-        color: #e5e7eb;
-        font-size: 14px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        margin-bottom: 8px;
-    }
-    .khqr-amount {
-        color: #fff;
-        font-size: 34px;
-        font-weight: 800;
-        margin-bottom: 20px;
-    }
-    .khqr-divider {
-        border-top: 2px dashed #334155;
-        margin: 0 0 22px;
-    }
-    .khqr-qr-wrap {
-        background: #fff;
-        border-radius: 16px;
-        padding: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-    }
-    .khqr-qr-wrap img,
-    .khqr-qr-wrap svg {
-        width: 100%;
-        max-width: 280px;
-        height: auto;
-        display: block;
-    }
-    .khqr-logo-overlay {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 56px;
-        height: 56px;
-        border-radius: 50%;
-        background: #dc2626;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 4px solid #fff;
-    }
-    .khqr-logo-overlay svg {
-        width: 28px;
-        height: 28px;
-    }
-
-    .khqr-help {
-        text-align: center;
-        color: #94a3b8;
-        font-size: 12px;
-        margin-top: 18px;
-        line-height: 1.5;
-    }
-
-    /* ---- Cash panel ---- */
-    .cash-panel {
-        max-width: 440px;
-        margin: 0 auto;
-        text-align: center;
-        padding: 30px 24px;
-        background: #f0fdf4;
-        border: 2px dashed #22c55e;
-        border-radius: 16px;
-    }
-    .cash-panel .cash-icon {
-        width: 64px;
-        height: 64px;
-        border-radius: 50%;
-        background: #22c55e;
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 16px;
-        font-size: 28px;
-    }
-    .cash-panel h4 {
-        font-size: 18px;
-        font-weight: 700;
-        color: #111827;
-        margin-bottom: 6px;
-    }
-    .cash-panel p {
-        font-size: 14px;
-        color: #6b7280;
-        line-height: 1.5;
-    }
-
-    /* ---- Terms ---- */
     .terms {
         display: flex;
         gap: 12px;
@@ -345,7 +163,6 @@
         margin-bottom: 32px;
     }
 
-    /* ---- Buttons ---- */
     .pay-actions {
         display: flex;
         justify-content: space-between;
@@ -386,7 +203,95 @@
         opacity: 0.94;
     }
 
-    /* ---- Success overlay ---- */
+    /* Review overlay */
+    .review-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.55);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 880;
+    }
+    .review-overlay.show {
+        display: flex;
+        animation: fadeIn 0.25s ease;
+    }
+
+    .review-card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 32px 34px;
+        width: 100%;
+        max-width: 440px;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+        animation: popIn 0.4s cubic-bezier(0.34, 1.4, 0.64, 1);
+    }
+    .review-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 6px;
+    }
+    .review-sub {
+        font-size: 14px;
+        color: #6b7280;
+        margin-bottom: 22px;
+    }
+    .review-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #f3f4f6;
+    }
+    .review-row:last-of-type {
+        border-bottom: none;
+    }
+    .review-row .k {
+        font-size: 13px;
+        color: #6b7280;
+    }
+    .review-row .v {
+        font-size: 14px;
+        font-weight: 700;
+        color: #111827;
+    }
+    .review-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 26px;
+    }
+    .review-actions button {
+        flex: 1;
+        padding: 13px 18px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+        border: none;
+        transition:
+            transform 0.15s,
+            opacity 0.15s;
+    }
+    .review-actions button:hover {
+        transform: translateY(-2px);
+        opacity: 0.94;
+    }
+    .btn-cancel {
+        background: #fff;
+        color: #374151;
+        border: 1px solid #e5e7eb !important;
+    }
+    .btn-confirm {
+        background: #22c55e;
+        color: #fff;
+    }
+    .btn-confirm:hover {
+        background: #16a34a;
+    }
+
+    /* Success overlay */
     .success-overlay {
         position: fixed;
         inset: 0;
@@ -458,7 +363,6 @@
             stroke-dashoffset: 0;
         }
     }
-
     .success-title {
         font-size: 22px;
         font-weight: 700;
@@ -488,14 +392,10 @@
         .grid-2 {
             grid-template-columns: 1fr;
         }
-        .method-grid {
-            grid-template-columns: 1fr;
-        }
     }
 </style>
 
 <div class="pay-wrap">
-    {{-- ============ PROGRESS ============ --}}
     <div class="progress-labels">
         <div class="active">
             <span class="num">1.</span> Select Payment Options
@@ -507,7 +407,6 @@
         <div class="bar active"></div>
     </div>
 
-    {{-- ============ HEADINGS ============ --}}
     <h2 class="pay-h2">Review &amp; Pay</h2>
     <p class="pay-sub">Please review payment details.</p>
 
@@ -519,9 +418,8 @@
         novalidate
     >
         @csrf
-        <input type="hidden" name="method" id="methodField" value="card" />
+        <input type="hidden" name="method" value="card" />
 
-        {{-- ============ BILLING DETAILS ============ --}}
         <div class="pay-section">
             <h3>Billing Details</h3>
             <div class="pay-box">
@@ -555,58 +453,7 @@
             </div>
         </div>
 
-        {{-- ============ PAYMENT METHOD ============ --}}
         <div class="pay-section">
-            <h3>Payment Method</h3>
-            <div class="method-grid">
-                <div
-                    class="method-card selected"
-                    data-method="card"
-                    id="methodCard"
-                >
-                    <div class="method-icon card">
-                        <span class="mc"
-                            ><span class="red"></span
-                            ><span class="yellow"></span
-                        ></span>
-                    </div>
-                    <div>
-                        <div class="name">Visa / Card</div>
-                        <div class="sub">Credit or debit card</div>
-                    </div>
-                </div>
-
-                <div class="method-card" data-method="aba_khqr" id="methodAba">
-                    <div class="method-icon aba">
-                        <span
-                            style="
-                                font-weight: 800;
-                                color: #dc2626;
-                                font-size: 14px;
-                            "
-                            >QR</span
-                        >
-                    </div>
-                    <div>
-                        <div class="name">ABA KHQR</div>
-                        <div class="sub">Scan to pay</div>
-                    </div>
-                </div>
-
-                <div class="method-card" data-method="cash" id="methodCash">
-                    <div class="method-icon cash">
-                        <span style="font-size: 20px">💵</span>
-                    </div>
-                    <div>
-                        <div class="name">Cash</div>
-                        <div class="sub">Pay in person</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {{-- ============ CARD PANEL ============ --}}
-        <div class="pay-section" id="panelCard">
             <h3>Card Details</h3>
             <div class="pay-box">
                 <div style="margin-bottom: 20px">
@@ -624,7 +471,6 @@
                             style="padding-right: 56px"
                         />
                         <div
-                            class="card-icon"
                             style="
                                 position: absolute;
                                 right: 14px;
@@ -687,74 +533,6 @@
             </div>
         </div>
 
-        {{-- ============ ABA KHQR PANEL ============ --}}
-        <div class="pay-section" id="panelAba" style="display: none">
-            <h3>ABA KHQR</h3>
-
-            <div class="khqr-card">
-                <div class="khqr-banner">KHQR</div>
-                <div class="khqr-body">
-                    <div class="khqr-name" id="khqrName">
-                        {{ auth()->user()->name }}
-                    </div>
-                    <div class="khqr-amount" id="khqrAmount">$15.00</div>
-                    <div class="khqr-divider"></div>
-                    <div class="khqr-qr-wrap">
-                        {{-- Replace the src below with your real KHQR image or generate one dynamically --}}
-                        <img
-                            src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=KHQR-DEMO-TENANT-{{ auth()->id() }}"
-                            alt="KHQR Code"
-                        />
-                        <div class="khqr-logo-overlay">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="#fff"
-                                stroke-width="2.5"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <path
-                                    d="M12 2l3 6 6 1-4.5 4.5L18 20l-6-3-6 3 1.5-6.5L3 9l6-1z"
-                                />
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="khqr-help">
-                        Open your ABA Mobile app → scan this QR<br />
-                        to complete your payment.
-                    </div>
-                </div>
-            </div>
-
-            <p
-                style="
-                    text-align: center;
-                    font-size: 13px;
-                    color: #6b7280;
-                    margin-top: 18px;
-                "
-            >
-                After scanning, click <strong>Pay</strong> below to record your
-                payment.
-            </p>
-        </div>
-
-        {{-- ============ CASH PANEL ============ --}}
-        <div class="pay-section" id="panelCash" style="display: none">
-            <h3>Cash Payment</h3>
-            <div class="cash-panel">
-                <div class="cash-icon">💵</div>
-                <h4>Pay in person</h4>
-                <p>
-                    Bring the exact amount in cash to your landlord or property
-                    office. After paying, click <strong>Pay</strong> below to
-                    record it here.
-                </p>
-            </div>
-        </div>
-
-        {{-- ============ TERMS ============ --}}
         <label class="terms" id="termsLabel">
             <input type="checkbox" id="fieldTerms" />
             <span>
@@ -777,7 +555,6 @@
             duplicate payments could result.
         </p>
 
-        {{-- ============ ACTIONS ============ --}}
         <div class="pay-actions">
             <a href="{{ route('tenant.dashboard') }}" class="btn-back">Back</a>
             <button type="submit" class="btn-pay" id="payBtn">
@@ -785,6 +562,46 @@
             </button>
         </div>
     </form>
+</div>
+
+{{-- ============ REVIEW OVERLAY ============ --}}
+<div class="review-overlay" id="reviewOverlay">
+    <div class="review-card">
+        <div class="review-title">Confirm Your Payment</div>
+        <div class="review-sub">
+            Please review the details before confirming.
+        </div>
+
+        <div class="review-row">
+            <span class="k">Amount</span
+            ><span class="v" id="reviewAmount">$0.00</span>
+        </div>
+        <div class="review-row">
+            <span class="k">Payment Date</span
+            ><span class="v" id="reviewDate">—</span>
+        </div>
+        <div class="review-row">
+            <span class="k">Card</span
+            ><span class="v" id="reviewCard">•••• ————</span>
+        </div>
+        <div class="review-row">
+            <span class="k">Name on Card</span
+            ><span class="v" id="reviewName">—</span>
+        </div>
+
+        <div class="review-actions">
+            <button type="button" class="btn-cancel" onclick="closeReview()">
+                Cancel
+            </button>
+            <button
+                type="button"
+                class="btn-confirm"
+                onclick="confirmPayment()"
+            >
+                Confirm Payment
+            </button>
+        </div>
+    </div>
 </div>
 
 {{-- ============ SUCCESS OVERLAY ============ --}}
@@ -806,7 +623,6 @@
 </div>
 
 <script>
-    // ---------- helpers ----------
     function setError(inputId, errId, message) {
         var input = document.getElementById(inputId);
         var err = document.getElementById(errId);
@@ -819,30 +635,6 @@
         }
     }
 
-    // ---------- Payment method switching ----------
-    var methodField = document.getElementById("methodField");
-    var panelCard = document.getElementById("panelCard");
-    var panelAba = document.getElementById("panelAba");
-    var panelCash = document.getElementById("panelCash");
-    var methodCards = document.querySelectorAll(".method-card");
-
-    methodCards.forEach(function (card) {
-        card.addEventListener("click", function () {
-            methodCards.forEach(function (c) {
-                c.classList.remove("selected");
-            });
-            card.classList.add("selected");
-
-            var m = card.getAttribute("data-method");
-            methodField.value = m;
-
-            panelCard.style.display = m === "card" ? "block" : "none";
-            panelAba.style.display = m === "aba_khqr" ? "block" : "none";
-            panelCash.style.display = m === "cash" ? "block" : "none";
-        });
-    });
-
-    // ---------- Auto-format card number ----------
     var cardNumber = document.getElementById("cardNumber");
     cardNumber.addEventListener("input", function () {
         var digits = this.value.replace(/\D/g, "").slice(0, 16);
@@ -870,16 +662,11 @@
         setError("cardName", "errCardName", "");
     });
 
-    // ---------- Live amount update (button + KHQR card) ----------
     var amountInput = document.getElementById("fieldAmount");
     var amountLabel = document.getElementById("payAmountLabel");
-    var khqrAmount = document.getElementById("khqrAmount");
-
     function updateAmountLabel() {
         var v = parseFloat(amountInput.value);
-        var text = "$" + (isNaN(v) ? "0.00" : v.toFixed(2));
-        amountLabel.textContent = text;
-        khqrAmount.textContent = text;
+        amountLabel.textContent = "$" + (isNaN(v) ? "0.00" : v.toFixed(2));
     }
     amountInput.addEventListener("input", function () {
         updateAmountLabel();
@@ -900,19 +687,20 @@
             document.getElementById("termsLabel").classList.remove("is-error");
         });
 
-    // ---------- Submit with inline validation ----------
     document.getElementById("payForm").addEventListener("submit", function (e) {
         e.preventDefault();
         var form = this;
-        var method = methodField.value;
 
         var amount = form.querySelector('input[name="amount"]').value.trim();
         var paidOn = form.querySelector('input[name="paid_on"]').value.trim();
+        var cardNum = document.getElementById("cardNumber").value.trim();
+        var cardExp = document.getElementById("cardExpiry").value.trim();
+        var cardCvc = document.getElementById("cardCvc").value.trim();
+        var cardName = document.getElementById("cardName").value.trim();
         var terms = document.getElementById("fieldTerms").checked;
         var hasError = false;
         var firstErrorField = null;
 
-        // Reset card errors
         setError("fieldAmount", "errAmount", "");
         setError("fieldPaidOn", "errPaidOn", "");
         setError("cardNumber", "errCardNumber", "");
@@ -940,42 +728,30 @@
             firstErrorField = firstErrorField || "fieldPaidOn";
         }
 
-        // Card-only validation
-        if (method === "card") {
-            var cardNum = document.getElementById("cardNumber").value.trim();
-            var cardExp = document.getElementById("cardExpiry").value.trim();
-            var cardCvc = document.getElementById("cardCvc").value.trim();
-            var cardName = document.getElementById("cardName").value.trim();
-            var digitsOnly = cardNum.replace(/\D/g, "");
-
-            if (digitsOnly.length < 13) {
-                setError(
-                    "cardNumber",
-                    "errCardNumber",
-                    "Enter a valid card number (13–16 digits).",
-                );
-                hasError = true;
-                firstErrorField = firstErrorField || "cardNumber";
-            }
-            if (!/^\d{2}\/\d{2}$/.test(cardExp)) {
-                setError("cardExpiry", "errCardExpiry", "Use MM/YY format.");
-                hasError = true;
-                firstErrorField = firstErrorField || "cardExpiry";
-            }
-            if (cardCvc.length < 3) {
-                setError("cardCvc", "errCardCvc", "At least 3 digits.");
-                hasError = true;
-                firstErrorField = firstErrorField || "cardCvc";
-            }
-            if (!cardName) {
-                setError(
-                    "cardName",
-                    "errCardName",
-                    "Enter the name on the card.",
-                );
-                hasError = true;
-                firstErrorField = firstErrorField || "cardName";
-            }
+        var digitsOnly = cardNum.replace(/\D/g, "");
+        if (digitsOnly.length < 13) {
+            setError(
+                "cardNumber",
+                "errCardNumber",
+                "Enter a valid card number (13–16 digits).",
+            );
+            hasError = true;
+            firstErrorField = firstErrorField || "cardNumber";
+        }
+        if (!/^\d{2}\/\d{2}$/.test(cardExp)) {
+            setError("cardExpiry", "errCardExpiry", "Use MM/YY format.");
+            hasError = true;
+            firstErrorField = firstErrorField || "cardExpiry";
+        }
+        if (cardCvc.length < 3) {
+            setError("cardCvc", "errCardCvc", "At least 3 digits.");
+            hasError = true;
+            firstErrorField = firstErrorField || "cardCvc";
+        }
+        if (!cardName) {
+            setError("cardName", "errCardName", "Enter the name on the card.");
+            hasError = true;
+            firstErrorField = firstErrorField || "cardName";
         }
 
         if (!terms) {
@@ -992,11 +768,27 @@
             return;
         }
 
+        document.getElementById("reviewAmount").textContent =
+            "$" + parseFloat(amount).toFixed(2);
+        document.getElementById("reviewDate").textContent = paidOn;
+        document.getElementById("reviewCard").textContent =
+            "•••• " + digitsOnly.slice(-4);
+        document.getElementById("reviewName").textContent = cardName;
+
+        document.getElementById("reviewOverlay").classList.add("show");
+    });
+
+    function closeReview() {
+        document.getElementById("reviewOverlay").classList.remove("show");
+    }
+
+    function confirmPayment() {
+        document.getElementById("reviewOverlay").classList.remove("show");
         document.getElementById("successOverlay").classList.add("show");
         setTimeout(function () {
-            form.submit();
+            document.getElementById("payForm").submit();
         }, 2200);
-    });
+    }
 </script>
 
 @endsection

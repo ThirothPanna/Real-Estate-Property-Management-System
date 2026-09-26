@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Tenant\DashboardController;
+use App\Http\Controllers\Tenant\NotificationController;
 use App\Http\Controllers\Tenant\PaymentController;
 use App\Http\Controllers\Tenant\ProfileController;
 use App\Http\Controllers\Tenant\RequestController;
@@ -23,10 +24,18 @@ Route::get('/auth/{provider}/callback', function ($provider) {
 
 Route::middleware(['auth'])->prefix('tenant')->name('tenant.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/notifications', [DashboardController::class, 'notifications'])->name('notifications');
+
+    // Notifications
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
+    Route::post('/notifications/{notification}/read',   [NotificationController::class, 'markRead'])->name('notifications.read');
+    Route::post('/notifications/{notification}/unread', [NotificationController::class, 'markUnread'])->name('notifications.unread');
+    Route::post('/notifications/{notification}/delete', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+    Route::post('/notifications/mark-all-read',         [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
+    Route::post('/notifications/mark-all-unread',       [NotificationController::class, 'markAllUnread'])->name('notifications.markAllUnread');
+    Route::post('/notifications/delete-all',            [NotificationController::class, 'destroyAll'])->name('notifications.destroyAll');
+
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/requests', [RequestController::class, 'store'])->name('requests.store');
-
     Route::get('/pay', [PaymentController::class, 'create'])->name('pay');
     Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
 });

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -37,6 +38,13 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        Notification::create([
+            'user_id' => $user->id,
+            'title'   => 'Welcome to TenantCloud',
+            'body'    => 'Set up your tenancy to get started.',
+            'icon'    => 'system',
+        ]);
+
+        return redirect(route('tenant.dashboard', absolute: false));
     }
 }

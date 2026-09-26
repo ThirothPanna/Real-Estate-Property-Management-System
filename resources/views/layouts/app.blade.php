@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'TenantCloud')</title>
+    <title>@yield('title', 'NEKJOUL IMANAGE')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
@@ -22,7 +22,11 @@
         .sidebar:hover, .sidebar.pinned { width:250px; box-shadow:4px 0 24px rgba(0,0,0,.08); }
         .logo { display:flex; align-items:center; gap:12px; margin-bottom:32px; padding-left:14px; width:100%; white-space:nowrap; }
         .logo-icon { color:#22c55e; flex-shrink:0; }
-        .logo-text { font-size:18px; font-weight:700; color:#111827; opacity:0; transition:opacity .25s .1s; }
+        .logo-text {
+            font-size:15px; font-weight:700; color:#111827;
+            opacity:0; transition:opacity .25s .1s;
+            letter-spacing:.5px; white-space:nowrap;
+        }
         .sidebar:hover .logo-text, .sidebar.pinned .logo-text { opacity:1; }
 
         .nav { width:100%; display:flex; flex-direction:column; gap:4px; padding:0 10px; }
@@ -74,67 +78,30 @@
             position:absolute; top:6px; right:6px; background:#ef4444; color:#fff;
             font-size:10px; width:16px; height:16px; border-radius:50%;
             display:flex; align-items:center; justify-content:center;
+            font-weight:700;
         }
 
         /* ============ TOPBAR DROPDOWNS ============ */
         .dropdown-wrap { position:relative; }
-
         .dropdown {
-            display:none;
-            position:absolute;
-            top:100%;
-            right:0;
-            margin-top:8px;
-            background:#fff;
-            border:1px solid #e5e7eb;
-            border-radius:12px;
-            box-shadow:0 12px 32px rgba(0,0,0,.12);
-            width:320px;
-            z-index:200;
-            overflow:hidden;
+            display:none; position:absolute; top:100%; right:0; margin-top:8px;
+            background:#fff; border:1px solid #e5e7eb; border-radius:12px;
+            box-shadow:0 12px 32px rgba(0,0,0,.12); width:320px; z-index:200; overflow:hidden;
         }
         .dropdown.open { display:block; }
-
         .dropdown-header {
-            padding:16px 20px;
-            border-bottom:1px solid #e5e7eb;
-            font-weight:600;
-            font-size:15px;
-            color:#111827;
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            white-space:nowrap;
+            padding:16px 20px; border-bottom:1px solid #e5e7eb;
+            font-weight:600; font-size:15px; color:#111827;
+            display:flex; justify-content:space-between; align-items:center; white-space:nowrap;
         }
-        .dropdown-header a {
-            font-size:13px;
-            color:#3f9c3a;
-            text-decoration:none;
-            font-weight:500;
-        }
+        .dropdown-header a { font-size:13px; color:#3f9c3a; text-decoration:none; font-weight:500; }
         .dropdown-header a:hover { text-decoration:underline; }
-
-        .dropdown-body {
-            max-height:340px;
-            overflow-y:auto;
-        }
-        .dropdown-empty {
-            padding:32px 20px;
-            text-align:center;
-            color:#9ca3af;
-            font-size:14px;
-        }
-
+        .dropdown-body { max-height:340px; overflow-y:auto; }
+        .dropdown-empty { padding:32px 20px; text-align:center; color:#9ca3af; font-size:14px; }
         .dropdown-item {
-            display:flex;
-            align-items:flex-start;
-            gap:12px;
-            padding:14px 20px;
-            cursor:pointer;
-            text-decoration:none;
-            color:#111827;
-            border-bottom:1px solid #f3f4f6;
-            transition:background .15s;
+            display:flex; align-items:flex-start; gap:12px; padding:14px 20px;
+            cursor:pointer; text-decoration:none; color:#111827;
+            border-bottom:1px solid #f3f4f6; transition:background .15s;
         }
         .dropdown-item:last-child { border-bottom:none; }
         .dropdown-item:hover { background:#f0fdf4; }
@@ -158,7 +125,6 @@
             width:340px; padding:24px 0; z-index:200;
         }
         .user-menu.open { display:block; }
-
         .user-menu-header { display:flex; align-items:center; gap:16px; padding:0 24px 20px; }
         .user-menu-avatar {
             width:56px; height:56px; border-radius:50%;
@@ -170,16 +136,13 @@
         .user-menu-role { font-size:13px; color:#9ca3af; }
         .user-menu-name { font-size:17px; font-weight:600; color:#111827; }
         .user-menu-email { font-size:14px; color:#3f9c3a; }
-
         .user-menu-settings {
             margin:8px 24px 18px; padding:10px 20px;
             border:1px solid #d1d5db; background:#fff; color:#111827;
             border-radius:8px; font-size:14px; font-weight:600; cursor:pointer;
         }
         .user-menu-settings:hover { background:#f9fafb; }
-
         .user-menu-divider { height:1px; background:#e5e7eb; margin:0 24px; }
-
         .user-menu-item {
             display:flex; align-items:center; gap:16px;
             padding:16px 24px; font-size:15px; color:#111827;
@@ -203,7 +166,7 @@
         .stat .trend { font-size:12px; color:#d1d5db; }
 
         .quick-actions { display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap; }
-        .btn { padding:10px 18px; border-radius:10px; border:none; cursor:pointer; font-size:14px; font-weight:600; display:flex; align-items:center; gap:8px; transition:transform .15s, opacity .15s; }
+        .btn { padding:10px 18px; border-radius:10px; border:none; cursor:pointer; font-size:14px; font-weight:600; display:flex; align-items:center; gap:8px; transition:transform .15s, opacity .15s; text-decoration:none; }
         .btn:hover { transform:translateY(-2px); opacity:.92; }
         .btn-primary { background:#22c55e; color:#fff; }
         .btn-outline { background:#fff; color:#374151; border:1px solid #e5e7eb; }
@@ -232,7 +195,7 @@
         <div class="logo-icon">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         </div>
-        <span class="logo-text">TenantCloud</span>
+        <span class="logo-text">NEKJOUL IMANAGE</span>
     </div>
 
     <nav class="nav">
@@ -261,15 +224,17 @@
     <header class="topbar">
         <div class="topbar-left">
 
-            {{-- MENU BUTTON — toggles sidebar --}}
+            {{-- MENU BUTTON --}}
             <button class="icon-btn" id="menuToggle" title="Toggle sidebar">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
             </button>
 
-            {{-- BELL — goes to notifications page --}}
+            {{-- BELL --}}
             <a href="{{ route('tenant.notifications') }}" class="icon-btn bell" title="Notifications">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                <span class="dot">0</span>
+                @if ($unreadCount > 0)
+                    <span class="dot">{{ $unreadCount }}</span>
+                @endif
             </a>
         </div>
 
@@ -283,14 +248,13 @@
                 </svg>
             </a>
 
-            {{-- CHAT — support --}}
+            {{-- CHAT --}}
             <div class="dropdown-wrap">
                 <button class="icon-btn" id="chatToggle" title="Support chat">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                     </svg>
                 </button>
-
                 <div class="dropdown" id="chatDropdown">
                     <div class="dropdown-header"><span>Support</span></div>
                     <div class="dropdown-body">
@@ -325,7 +289,7 @@
                 </div>
             </div>
 
-            {{-- HELP — ? --}}
+            {{-- HELP --}}
             <div class="dropdown-wrap">
                 <button class="icon-btn" id="helpToggle" title="Help">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -334,7 +298,6 @@
                         <line x1="12" y1="17" x2="12.01" y2="17"/>
                     </svg>
                 </button>
-
                 <div class="dropdown" id="helpDropdown">
                     <div class="dropdown-header"><span>Help &amp; Resources</span></div>
                     <div class="dropdown-body">
@@ -433,7 +396,7 @@
 </div>
 
 <script>
-    // ---- Sidebar toggle (pin/unpin) ----
+    // Sidebar toggle
     const sidebar = document.getElementById('sidebar');
     const menuToggle = document.getElementById('menuToggle');
     menuToggle.addEventListener('click', () => {
@@ -441,7 +404,7 @@
         document.body.classList.toggle('sidebar-pinned');
     });
 
-    // ---- Generic dropdown helper ----
+    // Generic dropdown helper
     function bindDropdown(btnId, menuId) {
         const btn  = document.getElementById(btnId);
         const menu = document.getElementById(menuId);
@@ -459,7 +422,7 @@
     bindDropdown('chatToggle', 'chatDropdown');
     bindDropdown('helpToggle', 'helpDropdown');
 
-    // ---- Profile pill ----
+    // Profile pill
     const pill = document.getElementById('profilePill');
     const userMenu = document.getElementById('userMenu');
 
@@ -470,7 +433,7 @@
         userMenu.classList.toggle('open');
     });
 
-    // ---- Click outside closes everything ----
+    // Click outside closes everything
     document.addEventListener('click', (e) => {
         document.querySelectorAll('.dropdown.open, .user-menu.open').forEach(el => {
             if (!el.parentElement.contains(e.target)) {

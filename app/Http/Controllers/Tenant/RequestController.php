@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Tenant;
 
 use App\Http\Controllers\Controller;
 use App\Models\MaintenanceRequest;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,7 +20,14 @@ class RequestController extends Controller
 
         $validated['user_id'] = Auth::id();
 
-        MaintenanceRequest::create($validated);
+        $req = MaintenanceRequest::create($validated);
+
+        Notification::create([
+            'user_id' => Auth::id(),
+            'title'   => 'Request submitted',
+            'body'    => $req->title . ' — Priority: ' . ucfirst($req->priority),
+            'icon'    => 'request',
+        ]);
 
         return back()->with('status', 'Request submitted successfully.');
     }
