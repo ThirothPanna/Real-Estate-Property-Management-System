@@ -2,8 +2,47 @@
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
-        <!-- Name -->
+        <!-- Role Selection -->
         <div>
+            <x-input-label for="role" :value="__('I am a')" />
+
+            <div class="mt-2 grid grid-cols-2 gap-3">
+                <!-- Tenant -->
+                <label class="cursor-pointer">
+                    <input type="radio" name="role" value="tenant"
+                           class="sr-only peer"
+                           {{ old('role', 'tenant') === 'tenant' ? 'checked' : '' }}>
+                    <div class="border-2 rounded-lg p-4 text-center transition-all
+                                border-gray-200 bg-white
+                                peer-checked:border-[#3f9c3a] peer-checked:bg-[#f0fdf4]
+                                hover:border-[#3f9c3a]">
+                        <div class="text-2xl mb-2">🏠</div>
+                        <div class="font-semibold text-gray-800 text-[15px]">Tenant</div>
+                        <div class="text-xs text-gray-500 mt-1">I rent a property</div>
+                    </div>
+                </label>
+
+                <!-- Landlord -->
+                <label class="cursor-pointer">
+                    <input type="radio" name="role" value="landlord"
+                           class="sr-only peer"
+                           {{ old('role') === 'landlord' ? 'checked' : '' }}>
+                    <div class="border-2 rounded-lg p-4 text-center transition-all
+                                border-gray-200 bg-white
+                                peer-checked:border-[#3f9c3a] peer-checked:bg-[#f0fdf4]
+                                hover:border-[#3f9c3a]">
+                        <div class="text-2xl mb-2">🔑</div>
+                        <div class="font-semibold text-gray-800 text-[15px]">Landlord</div>
+                        <div class="text-xs text-gray-500 mt-1">I own a property</div>
+                    </div>
+                </label>
+            </div>
+
+            <x-input-error :messages="$errors->get('role')" class="mt-2" />
+        </div>
+
+        <!-- Name -->
+        <div class="mt-4">
             <x-input-label for="name" :value="__('Name')" />
             <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
             <x-input-error :messages="$errors->get('name')" class="mt-2" />

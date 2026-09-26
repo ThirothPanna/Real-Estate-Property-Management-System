@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard – TenantCloud')
+@section('title', 'Dashboard – NEKJOUL IMANAGE')
 
 @section('content')
 
@@ -185,9 +185,79 @@
         <button class="btn btn-primary">Enroll</button>
     </div>
 
+    {{-- ============ LEASE DOCUMENTS (with uploader) ============ --}}
     <div class="panel">
         <h3>Lease Documents</h3>
-        <div class="lease-upload">📎 Click to upload lease documents</div>
+
+        {{-- Hidden file input + form --}}
+        <form method="POST" action="{{ route('tenant.documents.store') }}" enctype="multipart/form-data" id="uploadForm">
+            @csrf
+            <input type="file" name="document" id="documentInput" style="display:none;"
+                   accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+        </form>
+
+        {{-- Click-to-upload box --}}
+        <div class="lease-upload" onclick="document.getElementById('documentInput').click()">
+            📎 Click to upload lease documents
+            <div style="font-size:12px; color:#cbd5e1; margin-top:6px;">
+                PDF, JPG, PNG, DOC, DOCX · Max 10 MB
+            </div>
+        </div>
+
+        @error('document')
+            <div style="color:#ef4444; font-size:13px; margin-top:8px;">{{ $message }}</div>
+        @enderror
+
+        {{-- Uploaded documents list --}}
+        @if ($documents->isNotEmpty())
+            <div style="margin-top:20px; display:flex; flex-direction:column; gap:10px;">
+                @foreach ($documents as $doc)
+                    <div style="display:flex; align-items:center; gap:14px; padding:14px; border:1px solid #f3f4f6; border-radius:12px;">
+
+                        {{-- Icon --}}
+                        <div style="width:40px; height:40px; border-radius:10px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:18px;
+                            @if($doc->icon === 'pdf')   background:#fee2e2;
+                            @elseif($doc->icon === 'image') background:#dbeafe;
+                            @elseif($doc->icon === 'doc')   background:#e0e7ff;
+                            @else background:#f3f4f6;
+                            @endif">
+                            @if ($doc->icon === 'pdf')   📄
+                            @elseif ($doc->icon === 'image') 🖼️
+                            @elseif ($doc->icon === 'doc')   📝
+                            @else 📎
+                            @endif
+                        </div>
+
+                        {{-- Info --}}
+                        <div style="flex:1; min-width:0;">
+                            <div style="font-size:14px; font-weight:600; color:#111827; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                                {{ $doc->original_name }}
+                            </div>
+                            <div style="font-size:12px; color:#6b7280; margin-top:2px;">
+                                {{ $doc->readable_size }} · Uploaded {{ $doc->created_at->diffForHumans() }}
+                            </div>
+                        </div>
+
+                        {{-- Actions --}}
+                        <div style="display:flex; gap:6px; flex-shrink:0;">
+                            <a href="{{ route('tenant.documents.download', $doc) }}"
+                               style="width:32px; height:32px; border-radius:8px; border:1px solid #e5e7eb; display:flex; align-items:center; justify-content:center; color:#6b7280; text-decoration:none;"
+                               title="Download">⬇</a>
+
+                            <form method="POST" action="{{ route('tenant.documents.destroy', $doc) }}"
+                                  onsubmit="return confirm('Delete this document?');" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                        style="width:32px; height:32px; border-radius:8px; border:1px solid #e5e7eb; background:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#6b7280;"
+                                        title="Delete">✕</button>
+                            </form>
+                        </div>
+
+                    </div>
+                @endforeach
+            </div>
+        @endif
     </div>
 
     {{-- ============ REQUEST MODAL ============ --}}
@@ -248,6 +318,16 @@
             m.addEventListener('click', function (e) {
                 if (e.target === m) m.style.display = 'none';
             });
+
+            // Auto-submit the upload form when a file is selected
+            var input = document.getElementById('documentInput');
+            if (input) {
+                input.addEventListener('change', function () {
+                    if (this.files.length > 0) {
+                        document.getElementById('uploadForm').submit();
+                    }
+                });
+            }
         });
     </script>
 

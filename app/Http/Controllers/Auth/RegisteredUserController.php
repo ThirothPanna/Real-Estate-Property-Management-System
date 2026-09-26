@@ -25,12 +25,14 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name'     => ['required', 'string', 'max:255'],
             'email'    => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'role'     => ['nullable', 'in:tenant,landlord'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
             'name'     => $request->name,
             'email'    => $request->email,
+            'role'     => $request->input('role', 'tenant'),
             'password' => Hash::make($request->password),
         ]);
 
@@ -40,11 +42,11 @@ class RegisteredUserController extends Controller
 
         Notification::create([
             'user_id' => $user->id,
-            'title'   => 'Welcome to TenantCloud',
-            'body'    => 'Set up your tenancy to get started.',
+            'title'   => 'Welcome to NEKJOUL IMANAGE',
+            'body'    => 'Your ' . ucfirst($user->role) . ' account is ready.',
             'icon'    => 'system',
         ]);
 
-        return redirect(route('tenant.dashboard', absolute: false));
+        return redirect()->route('dashboard');
     }
 }

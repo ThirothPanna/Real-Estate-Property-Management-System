@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'NEKJOUL IMANAGE')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
     <style>
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', system-ui, sans-serif; }
@@ -116,7 +117,20 @@
             position:relative; user-select:none; margin-left:8px;
         }
         .profile-name { font-size:14px; font-weight:600; color:#111827; }
-        .avatar { width:36px; height:36px; border-radius:50%; background:#22c55e; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:600; font-size:14px; }
+
+        .avatar {
+            width:36px; height:36px; border-radius:50%;
+            background:#22c55e; color:#fff;
+            display:flex; align-items:center; justify-content:center;
+            font-weight:600; font-size:14px;
+            overflow:hidden;
+            flex-shrink:0;
+        }
+        .avatar img {
+            width:100%; height:100%;
+            object-fit:cover;
+            display:block;
+        }
 
         .user-menu {
             display:none; position:absolute; right:0; top:calc(100% + 8px);
@@ -126,22 +140,41 @@
         }
         .user-menu.open { display:block; }
         .user-menu-header { display:flex; align-items:center; gap:16px; padding:0 24px 20px; }
+
         .user-menu-avatar {
             width:56px; height:56px; border-radius:50%;
             background:#34d399; color:#fff; flex-shrink:0;
             display:flex; align-items:center; justify-content:center;
             font-weight:600; font-size:20px;
+            overflow:hidden;
         }
+        .user-menu-avatar img {
+            width:100%; height:100%;
+            object-fit:cover;
+            display:block;
+        }
+
         .user-menu-info { display:flex; flex-direction:column; gap:2px; }
         .user-menu-role { font-size:13px; color:#9ca3af; }
         .user-menu-name { font-size:17px; font-weight:600; color:#111827; }
         .user-menu-email { font-size:14px; color:#3f9c3a; }
+
         .user-menu-settings {
-            margin:8px 24px 18px; padding:10px 20px;
-            border:1px solid #d1d5db; background:#fff; color:#111827;
-            border-radius:8px; font-size:14px; font-weight:600; cursor:pointer;
+            display:block;
+            margin:8px 24px 18px;
+            padding:10px 20px;
+            border:1px solid #d1d5db;
+            background:#fff;
+            color:#111827;
+            border-radius:8px;
+            font-size:14px;
+            font-weight:600;
+            cursor:pointer;
+            text-align:center;
+            text-decoration:none;
         }
         .user-menu-settings:hover { background:#f9fafb; }
+
         .user-menu-divider { height:1px; background:#e5e7eb; margin:0 24px; }
         .user-menu-item {
             display:flex; align-items:center; gap:16px;
@@ -199,15 +232,45 @@
     </div>
 
     <nav class="nav">
-        <a href="{{ route('tenant.dashboard') }}" class="nav-item {{ request()->routeIs('tenant.dashboard') ? 'active' : '' }}">
-            <span class="nav-icon">▦</span><span class="nav-label">Dashboard</span>
-        </a>
-        <a href="#" class="nav-item"><span class="nav-icon">＄</span><span class="nav-label">Rent</span></a>
-        <a href="#" class="nav-item"><span class="nav-icon">✂</span><span class="nav-label">Requests</span></a>
-        <a href="#" class="nav-item"><span class="nav-icon">⚲</span><span class="nav-label">Utility Providers</span></a>
-        <a href="#" class="nav-item"><span class="nav-icon">▤</span><span class="nav-label">Applications</span></a>
-        <a href="#" class="nav-item"><span class="nav-icon">🗀</span><span class="nav-label">File Manager</span></a>
-        <a href="#" class="nav-item"><span class="nav-icon">☁</span><span class="nav-label">Downloads</span></a>
+        @if (auth()->user()->isLandlord())
+            {{-- ========== LANDLORD SIDEBAR ========== --}}
+            <a href="{{ route('landlord.dashboard') }}" class="nav-item {{ request()->routeIs('landlord.dashboard') ? 'active' : '' }}">
+                <span class="nav-icon">▦</span><span class="nav-label">Dashboard</span>
+            </a>
+            <a href="{{ route('landlord.properties.index') }}" class="nav-item {{ request()->routeIs('landlord.properties.*') ? 'active' : '' }}">
+                <span class="nav-icon">🏠</span><span class="nav-label">Properties</span>
+            </a>
+            <a href="{{ route('landlord.tenants.index') }}" class="nav-item {{ request()->routeIs('landlord.tenants.*') ? 'active' : '' }}">
+                <span class="nav-icon">👥</span><span class="nav-label">Tenants</span>
+            </a>
+            <a href="#" class="nav-item"><span class="nav-icon">✂</span><span class="nav-label">Requests</span></a>
+            <a href="#" class="nav-item"><span class="nav-icon">💳</span><span class="nav-label">Payments</span></a>
+            <a href="#" class="nav-item"><span class="nav-icon">📊</span><span class="nav-label">Reports</span></a>
+            <a href="#" class="nav-item"><span class="nav-icon">🗀</span><span class="nav-label">Documents</span></a>
+        @else
+            {{-- ========== TENANT SIDEBAR ========== --}}
+            <a href="{{ route('tenant.dashboard') }}" class="nav-item {{ request()->routeIs('tenant.dashboard') ? 'active' : '' }}">
+                <span class="nav-icon">▦</span><span class="nav-label">Dashboard</span>
+            </a>
+            <a href="{{ route('tenant.rent') }}" class="nav-item {{ request()->routeIs('tenant.rent') ? 'active' : '' }}">
+                <span class="nav-icon">＄</span><span class="nav-label">Rent</span>
+            </a>
+            <a href="{{ route('tenant.requests') }}" class="nav-item {{ request()->routeIs('tenant.requests') ? 'active' : '' }}">
+                <span class="nav-icon">✂</span><span class="nav-label">Requests</span>
+            </a>
+            <a href="{{ route('tenant.utilities') }}" class="nav-item {{ request()->routeIs('tenant.utilities') ? 'active' : '' }}">
+                <span class="nav-icon">⚲</span><span class="nav-label">Utility Providers</span>
+            </a>
+            <a href="{{ route('tenant.applications') }}" class="nav-item {{ request()->routeIs('tenant.applications') ? 'active' : '' }}">
+                <span class="nav-icon">▤</span><span class="nav-label">Applications</span>
+            </a>
+            <a href="{{ route('tenant.files') }}" class="nav-item {{ request()->routeIs('tenant.files') ? 'active' : '' }}">
+                <span class="nav-icon">🗀</span><span class="nav-label">File Manager</span>
+            </a>
+            <a href="{{ route('tenant.downloads') }}" class="nav-item {{ request()->routeIs('tenant.downloads') ? 'active' : '' }}">
+                <span class="nav-icon">☁</span><span class="nav-label">Downloads</span>
+            </a>
+        @endif
     </nav>
 
     <div class="sidebar-bottom">
@@ -241,7 +304,7 @@
         <div class="topbar-right">
 
             {{-- HOME --}}
-            <a href="{{ route('tenant.dashboard') }}" class="icon-btn" title="Home">
+            <a href="{{ route(auth()->user()->dashboardRoute()) }}" class="icon-btn" title="Home">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                     <polyline points="9 22 9 12 15 12 15 22"/>
@@ -258,13 +321,13 @@
                 <div class="dropdown" id="chatDropdown">
                     <div class="dropdown-header"><span>Support</span></div>
                     <div class="dropdown-body">
-                        <a href="mailto:support@tenantcloud.com" class="dropdown-item">
+                        <a href="mailto:support@nekjoul.com" class="dropdown-item">
                             <span class="dropdown-item-icon">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
                             </span>
                             <div>
                                 <div class="dropdown-item-title">Email Support</div>
-                                <div class="dropdown-item-text">support@tenantcloud.com</div>
+                                <div class="dropdown-item-text">support@nekjoul.com</div>
                             </div>
                         </a>
                         <a href="#" class="dropdown-item">
@@ -344,21 +407,27 @@
             {{-- PROFILE --}}
             <div class="profile" id="profilePill">
                 <span class="profile-name">{{ auth()->user()->name }}</span>
-                <div class="avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
+                <div class="avatar">
+                    <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}">
+                </div>
 
                 <div class="user-menu" id="userMenu">
                     <div class="user-menu-header">
                         <div class="user-menu-avatar">
-                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}{{ strtoupper(substr(strrchr(auth()->user()->name, ' '), 1, 1)) }}
+                            <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}">
                         </div>
                         <div class="user-menu-info">
-                            <span class="user-menu-role">Tenant</span>
+                            <span class="user-menu-role">{{ auth()->user()->isLandlord() ? 'Landlord' : 'Tenant' }}</span>
                             <span class="user-menu-name">{{ auth()->user()->name }}</span>
                             <span class="user-menu-email">{{ auth()->user()->email }}</span>
                         </div>
                     </div>
 
-                    <button type="button" class="user-menu-settings">Settings</button>
+                    @if (auth()->user()->isLandlord())
+                        <a href="#" class="user-menu-settings">Settings</a>
+                    @else
+                        <a href="{{ route('tenant.settings') }}" class="user-menu-settings">Settings</a>
+                    @endif
 
                     <div class="user-menu-divider"></div>
 
