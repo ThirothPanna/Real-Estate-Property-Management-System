@@ -10,9 +10,22 @@ class Property extends Model
     use HasFactory;
 
     protected $fillable = [
-        'landlord_id', 'name', 'address', 'city', 'state', 'zip', 'country',
-        'type', 'bedrooms', 'bathrooms', 'square_feet', 'rent_amount',
-        'description', 'status', 'latitude', 'longitude',
+        'landlord_id',
+        'name',
+        'address',
+        'city',
+        'state',
+        'zip',
+        'country',
+        'type',
+        'bedrooms',
+        'bathrooms',
+        'square_feet',
+        'rent_amount',
+        'description',
+        'status',
+        'latitude',
+        'longitude',
     ];
 
     protected $casts = [
@@ -41,21 +54,16 @@ class Property extends Model
         return $this->hasOne(Tenancy::class)->where('status', 'active')->latest();
     }
 
-    public function currentTenant()
-    {
-        return $this->activeTenancy?->tenant;
-    }
-
-    public function isOccupied(): bool
-    {
-        return $this->activeTenancy()->exists();
-    }
-
     public function getFullAddressAttribute(): string
     {
         $parts = array_filter([
-            $this->address, $this->city, $this->state, $this->zip, $this->country,
+            $this->address,
+            $this->city,
+            $this->state,
+            $this->zip,
+            $this->country,
         ]);
+
         return implode(', ', $parts);
     }
 
@@ -69,34 +77,53 @@ class Property extends Model
         };
     }
 
+    /**
+     * Cover image URL — first tries cover photo, then any photo, then inline placeholder.
+     */
     public function getCoverUrlAttribute(): string
     {
-        $cover = $this->photos->firstWhere('is_cover', true) ?? $this->photos->first();
-        return $cover ? $cover->url : 'https://via.placeholder.com/800x500/e5e7eb/9ca3af?text=No+Photo';
+        if ($this->relationLoaded('photos')) {
+            $cover = $this->photos->firstWhere('is_cover', true) ?? $this->photos->first();
+            if ($cover) {
+                return $cover->url;
+            }
+        }
+
+        $cover = $this->photos()->where('is_cover', true)->first()
+              ?? $this->photos()->first();
+
+        if ($cover) {
+            return $cover->url;
+        }
+
+        return PropertyPhoto::placeholderSvg();
+    }
+
+    public function getImageUrlAttribute(): string
+    {
+        return $this->cover_url;
     }
 
     public function getPhotosCountAttribute(): int
     {
-        return $this->photos->count();
+        return $this->photos()->count();
     }
 
     public function getMapEmbedUrlAttribute(): string
     {
-        if ($this->latitude && $this->longitude) {
-            $q = $this->latitude . ',' . $this->longitude;
-        } else {
-            $q = urlencode($this->full_address);
-        }
+        $q = ($this->latitude && $this->longitude)
+            ? ($this->latitude . ',' . $this->longitude)
+            : urlencode($this->full_address);
+
         return 'https://www.google.com/maps?q=' . $q . '&output=embed';
     }
 
     public function getMapLinkAttribute(): string
     {
-        if ($this->latitude && $this->longitude) {
-            $q = $this->latitude . ',' . $this->longitude;
-        } else {
-            $q = urlencode($this->full_address);
-        }
+        $q = ($this->latitude && $this->longitude)
+            ? ($this->latitude . ',' . $this->longitude)
+            : urlencode($this->full_address);
+
         return 'https://www.google.com/maps/search/?api=1&query=' . $q;
     }
 }

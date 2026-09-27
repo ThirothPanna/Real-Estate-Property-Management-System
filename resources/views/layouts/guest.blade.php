@@ -14,12 +14,9 @@
 </head>
 <body class="font-sans text-gray-900 antialiased bg-white">
     <header class="w-full h-[72px] border-b border-gray-100 flex items-center justify-between px-6 lg:px-12 relative z-20 bg-white">
-        <div class="flex items-center gap-2">
-            <svg class="h-8 w-8 text-[#3f9c3a]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
-            <span class="text-[22px] font-bold text-gray-800 tracking-tight">{{ config('app.name', 'NEKJOUL IMANAGE') }}</span>
-        </div>
+        <a href="{{ url('/') }}" aria-label="NEKJOUL IMANAGE home">
+            <img src="{{ asset('images/logo-full-removebg-preview.png') }}" alt="NEKJOUL IMANAGE" class="h-10 w-auto">
+        </a>
         
         <div class="flex items-center gap-6">
             <span class="text-[15px] text-gray-600 hidden sm:block">Don't have an account?</span>

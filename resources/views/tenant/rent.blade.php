@@ -148,7 +148,7 @@
         </div>
 
         <a href="{{ route('tenant.pay') }}" class="btn-pay">
-            💳 Pay Rent
+            Pay Rent
         </a>
     </div>
 
@@ -216,10 +216,10 @@
 
         @if ($payments->isEmpty())
             <div class="empty">
-                <div class="empty-icon">💳</div>
+                <div class="empty-icon">$</div>
                 <div>No payments found for {{ $year }}.</div>
                 <div style="margin-top:14px;">
-                    <a href="{{ route('tenant.pay') }}" class="btn-pay">💳 Make a payment</a>
+                    <a href="{{ route('tenant.pay') }}" class="btn-pay">Make a payment</a>
                 </div>
             </div>
         @else
@@ -250,7 +250,7 @@
                             <td class="amount-cell">${{ number_format($p->amount, 2) }}</td>
                             <td style="text-align:right;">
                                 <a href="{{ route('tenant.receipts.download', $p) }}" class="btn-receipt" title="Download receipt">
-                                    ⬇ PDF
+                                    PDF
                                 </a>
                             </td>
                         </tr>

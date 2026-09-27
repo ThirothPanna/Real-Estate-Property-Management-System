@@ -21,8 +21,12 @@
             overflow:hidden; z-index:100;
         }
         .sidebar:hover, .sidebar.pinned { width:250px; box-shadow:4px 0 24px rgba(0,0,0,.08); }
-        .logo { display:flex; align-items:center; gap:12px; margin-bottom:32px; padding-left:14px; width:100%; white-space:nowrap; }
-        .logo-icon { color:#22c55e; flex-shrink:0; }
+        .logo { display:flex; align-items:center; justify-content:center; margin-bottom:32px; width:100%; min-height:42px; white-space:nowrap; }
+        .logo img { display:block; object-fit:contain; }
+        .logo-mark { width:38px; height:38px; }
+        .logo-full { display:none !important; width:180px; height:42px; }
+        .sidebar:hover .logo-mark, .sidebar.pinned .logo-mark { display:none; }
+        .sidebar:hover .logo-full, .sidebar.pinned .logo-full { display:block !important; }
         .logo-text {
             font-size:15px; font-weight:700; color:#111827;
             opacity:0; transition:opacity .25s .1s;
@@ -55,8 +59,17 @@
         .sidebar:hover .app-badge-text, .sidebar.pinned .app-badge-text { opacity:1; }
 
         /* ============ MAIN / TOPBAR ============ */
-        .main { margin-left:78px; min-height:100vh; transition:margin-left .35s cubic-bezier(.4,0,.2,1); }
-        body.sidebar-pinned .main { margin-left:250px; }
+        .main {
+            margin-left:78px;
+            width:calc(100% - 78px);
+            min-height:100vh;
+            transition:margin-left .35s cubic-bezier(.4,0,.2,1), width .35s cubic-bezier(.4,0,.2,1);
+            overflow-x:hidden;
+        }
+        body.sidebar-pinned .main {
+            margin-left:250px;
+            width:calc(100% - 250px);
+        }
 
         .topbar {
             display:flex; align-items:center; justify-content:space-between;
@@ -126,11 +139,7 @@
             overflow:hidden;
             flex-shrink:0;
         }
-        .avatar img {
-            width:100%; height:100%;
-            object-fit:cover;
-            display:block;
-        }
+        .avatar img { width:100%; height:100%; object-fit:cover; display:block; }
 
         .user-menu {
             display:none; position:absolute; right:0; top:calc(100% + 8px);
@@ -148,11 +157,7 @@
             font-weight:600; font-size:20px;
             overflow:hidden;
         }
-        .user-menu-avatar img {
-            width:100%; height:100%;
-            object-fit:cover;
-            display:block;
-        }
+        .user-menu-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
 
         .user-menu-info { display:flex; flex-direction:column; gap:2px; }
         .user-menu-role { font-size:13px; color:#9ca3af; }
@@ -225,10 +230,8 @@
 {{-- ============ SIDEBAR ============ --}}
 <aside class="sidebar" id="sidebar">
     <div class="logo">
-        <div class="logo-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        </div>
-        <span class="logo-text">NEKJOUL IMANAGE</span>
+        <img class="logo-mark" src="{{ asset('images/logo-icon.png') }}" alt="NEKJOUL IMANAGE">
+        <img class="logo-full" src="{{ asset('images/logo-full-removebg-preview.png') }}" alt="NEKJOUL IMANAGE">
     </div>
 
     <nav class="nav">
@@ -238,37 +241,51 @@
                 <span class="nav-icon">▦</span><span class="nav-label">Dashboard</span>
             </a>
             <a href="{{ route('landlord.properties.index') }}" class="nav-item {{ request()->routeIs('landlord.properties.*') ? 'active' : '' }}">
-                <span class="nav-icon">🏠</span><span class="nav-label">Properties</span>
+                <span class="nav-icon">▣</span><span class="nav-label">Properties</span>
             </a>
             <a href="{{ route('landlord.tenants.index') }}" class="nav-item {{ request()->routeIs('landlord.tenants.*') ? 'active' : '' }}">
-                <span class="nav-icon">👥</span><span class="nav-label">Tenants</span>
+                <span class="nav-icon">◎</span><span class="nav-label">Tenants</span>
             </a>
-            <a href="#" class="nav-item"><span class="nav-icon">✂</span><span class="nav-label">Requests</span></a>
-            <a href="#" class="nav-item"><span class="nav-icon">💳</span><span class="nav-label">Payments</span></a>
-            <a href="#" class="nav-item"><span class="nav-icon">📊</span><span class="nav-label">Reports</span></a>
-            <a href="#" class="nav-item"><span class="nav-icon">🗀</span><span class="nav-label">Documents</span></a>
+            <a href="{{ route('landlord.requests.index') }}" class="nav-item {{ request()->routeIs('landlord.requests.*') ? 'active' : '' }}">
+                <span class="nav-icon">✂</span><span class="nav-label">Requests</span>
+            </a>
+            <a href="{{ route('landlord.payments.index') }}" class="nav-item {{ request()->routeIs('landlord.payments.*') ? 'active' : '' }}">
+                <span class="nav-icon">$</span><span class="nav-label">Payments</span>
+            </a>
+            <a href="{{ route('landlord.reports.index') }}" class="nav-item {{ request()->routeIs('landlord.reports.*') ? 'active' : '' }}">
+                <span class="nav-icon">▤</span><span class="nav-label">Reports</span>
+            </a>
+            <a href="{{ route('landlord.announcements.index') }}" class="nav-item {{ request()->routeIs('landlord.announcements.*') ? 'active' : '' }}">
+                <span class="nav-icon">◉</span><span class="nav-label">Announcements</span>
+            </a>
+            <a href="{{ route('landlord.documents.index') }}" class="nav-item {{ request()->routeIs('landlord.documents.*') ? 'active' : '' }}">
+                <span class="nav-icon">▤</span><span class="nav-label">Documents</span>
+            </a>
+            <a href="{{ route('landlord.leases.index') }}" class="nav-item {{ request()->routeIs('landlord.leases.*') ? 'active' : '' }}">
+                <span class="nav-icon">▣</span><span class="nav-label">Leases</span>
+            </a>
         @else
             {{-- ========== TENANT SIDEBAR ========== --}}
             <a href="{{ route('tenant.dashboard') }}" class="nav-item {{ request()->routeIs('tenant.dashboard') ? 'active' : '' }}">
                 <span class="nav-icon">▦</span><span class="nav-label">Dashboard</span>
             </a>
             <a href="{{ route('tenant.rent') }}" class="nav-item {{ request()->routeIs('tenant.rent') ? 'active' : '' }}">
-                <span class="nav-icon">＄</span><span class="nav-label">Rent</span>
+                <span class="nav-icon">$</span><span class="nav-label">Rent</span>
             </a>
             <a href="{{ route('tenant.requests') }}" class="nav-item {{ request()->routeIs('tenant.requests') ? 'active' : '' }}">
                 <span class="nav-icon">✂</span><span class="nav-label">Requests</span>
             </a>
             <a href="{{ route('tenant.utilities') }}" class="nav-item {{ request()->routeIs('tenant.utilities') ? 'active' : '' }}">
-                <span class="nav-icon">⚲</span><span class="nav-label">Utility Providers</span>
+                <span class="nav-icon">◫</span><span class="nav-label">Utility Providers</span>
             </a>
             <a href="{{ route('tenant.applications') }}" class="nav-item {{ request()->routeIs('tenant.applications') ? 'active' : '' }}">
                 <span class="nav-icon">▤</span><span class="nav-label">Applications</span>
             </a>
             <a href="{{ route('tenant.files') }}" class="nav-item {{ request()->routeIs('tenant.files') ? 'active' : '' }}">
-                <span class="nav-icon">🗀</span><span class="nav-label">File Manager</span>
+                <span class="nav-icon">▣</span><span class="nav-label">File Manager</span>
             </a>
             <a href="{{ route('tenant.downloads') }}" class="nav-item {{ request()->routeIs('tenant.downloads') ? 'active' : '' }}">
-                <span class="nav-icon">☁</span><span class="nav-label">Downloads</span>
+                <span class="nav-icon">⇩</span><span class="nav-label">Downloads</span>
             </a>
         @endif
     </nav>
@@ -286,14 +303,12 @@
 
     <header class="topbar">
         <div class="topbar-left">
-
-            {{-- MENU BUTTON --}}
             <button class="icon-btn" id="menuToggle" title="Toggle sidebar">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
             </button>
 
-            {{-- BELL --}}
-            <a href="{{ route('tenant.notifications') }}" class="icon-btn bell" title="Notifications">
+            {{-- BELL — role-aware link --}}
+            <a href="{{ route(auth()->user()->isLandlord() ? 'landlord.notifications' : 'tenant.notifications') }}" class="icon-btn bell" title="Notifications">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                 @if ($unreadCount > 0)
                     <span class="dot">{{ $unreadCount }}</span>
@@ -302,8 +317,6 @@
         </div>
 
         <div class="topbar-right">
-
-            {{-- HOME --}}
             <a href="{{ route(auth()->user()->dashboardRoute()) }}" class="icon-btn" title="Home">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
@@ -424,7 +437,7 @@
                     </div>
 
                     @if (auth()->user()->isLandlord())
-                        <a href="#" class="user-menu-settings">Settings</a>
+                        <a href="{{ route('landlord.settings') }}" class="user-menu-settings">Settings</a>
                     @else
                         <a href="{{ route('tenant.settings') }}" class="user-menu-settings">Settings</a>
                     @endif
@@ -465,7 +478,6 @@
 </div>
 
 <script>
-    // Sidebar toggle
     const sidebar = document.getElementById('sidebar');
     const menuToggle = document.getElementById('menuToggle');
     menuToggle.addEventListener('click', () => {
@@ -473,7 +485,6 @@
         document.body.classList.toggle('sidebar-pinned');
     });
 
-    // Generic dropdown helper
     function bindDropdown(btnId, menuId) {
         const btn  = document.getElementById(btnId);
         const menu = document.getElementById(menuId);
@@ -491,7 +502,6 @@
     bindDropdown('chatToggle', 'chatDropdown');
     bindDropdown('helpToggle', 'helpDropdown');
 
-    // Profile pill
     const pill = document.getElementById('profilePill');
     const userMenu = document.getElementById('userMenu');
 
@@ -502,7 +512,6 @@
         userMenu.classList.toggle('open');
     });
 
-    // Click outside closes everything
     document.addEventListener('click', (e) => {
         document.querySelectorAll('.dropdown.open, .user-menu.open').forEach(el => {
             if (!el.parentElement.contains(e.target)) {

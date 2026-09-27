@@ -3,40 +3,46 @@
 namespace App\Http\Controllers\Tenant;
 
 use App\Http\Controllers\Controller;
+use App\Models\Lease;
 use App\Models\LeaseDocument;
 use App\Models\MaintenanceRequest;
 use App\Models\Payment;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $requests = MaintenanceRequest::where('user_id', Auth::id())
+        $userId = Auth::id();
+
+        $requests = MaintenanceRequest::where('user_id', $userId)
             ->latest()
             ->get();
 
-        $payments = Payment::where('user_id', Auth::id())
+        $payments = Payment::where('user_id', $userId)
             ->latest('paid_on')
             ->get();
 
-        $documents = LeaseDocument::where('user_id', Auth::id())
+        $documents = LeaseDocument::where('user_id', $userId)
             ->latest()
             ->get();
 
-        return view('tenant.dashboard', compact('requests', 'payments', 'documents'));
+        $leases = Lease::where('user_id', $userId)
+            ->latest()
+            ->get();
+
+        return view('tenant.dashboard', compact('requests', 'payments', 'documents', 'leases'));
     }
 
-    public function rent(Request $request)
+    public function rent()
     {
         $userId = Auth::id();
-
-        $year = (int) $request->get('year', date('Y'));
 
         $allPayments = Payment::where('user_id', $userId)
             ->latest('paid_on')
             ->get();
+
+        $year = (int) request()->get('year', date('Y'));
 
         $payments = Payment::where('user_id', $userId)
             ->whereYear('paid_on', $year)
@@ -95,11 +101,20 @@ class DashboardController extends Controller
 
     public function files()
     {
-        return view('tenant.files');
+        $documents = LeaseDocument::where('user_id', Auth::id())
+            ->latest()
+            ->get();
+
+        return view('tenant.files', compact('documents'));
     }
 
     public function downloads()
     {
         return view('tenant.downloads');
+    }
+
+    public function notifications()
+    {
+        return view('tenant.notifications');
     }
 }

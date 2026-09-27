@@ -572,24 +572,7 @@
         <header class="nav">
             <div class="nav-inner">
                 <a href="/" class="brand">
-                    <span class="brand-icon">
-                        <svg
-                            width="22"
-                            height="22"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2.5"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <path
-                                d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
-                            />
-                            <polyline points="9 22 9 12 15 12 15 22" />
-                        </svg>
-                    </span>
-                    NEKJOUL IMANAGE
+                    <img src="{{ asset('images/logo-full-removebg-preview.png') }}" alt="NEKJOUL IMANAGE" style="height: 34px; width: auto; display:block;">
                 </a>
 
                 <nav class="nav-links">

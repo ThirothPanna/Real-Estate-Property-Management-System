@@ -25,14 +25,14 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name'     => ['required', 'string', 'max:255'],
             'email'    => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'role'     => ['nullable', 'in:tenant,landlord'],
+            'role'     => ['required', 'in:tenant,landlord'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
             'name'     => $request->name,
             'email'    => $request->email,
-            'role'     => $request->input('role', 'tenant'),
+            'role'     => $request->role,
             'password' => Hash::make($request->password),
         ]);
 
@@ -47,6 +47,6 @@ class RegisteredUserController extends Controller
             'icon'    => 'system',
         ]);
 
-        return redirect()->route('dashboard');
+        return redirect(route($user->dashboardRoute(), absolute: false));
     }
 }

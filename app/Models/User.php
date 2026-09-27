@@ -35,8 +35,11 @@ class User extends Authenticatable
 
     public function getAvatarUrlAttribute(): string
     {
-        if ($this->avatar && Storage::disk('public')->exists($this->avatar)) {
-            return Storage::disk('public')->url($this->avatar);
+        /** @var \Illuminate\Filesystem\FilesystemAdapter $storage */
+        $storage = Storage::disk('public');
+
+        if ($this->avatar && $storage->exists($this->avatar)) {
+            return $storage->url($this->avatar);
         }
 
         return 'https://ui-avatars.com/api/?name=' . urlencode($this->name)
@@ -71,5 +74,12 @@ class User extends Authenticatable
     public function landlordTenancies()
     {
         return $this->hasMany(Tenancy::class, 'landlord_id');
+    }
+
+    public function announcements()
+    {
+        return $this->belongsToMany(Announcement::class, 'announcement_recipient')
+                    ->withPivot('read_at')
+                    ->withTimestamps();
     }
 }

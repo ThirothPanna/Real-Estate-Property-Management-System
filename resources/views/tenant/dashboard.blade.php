@@ -53,7 +53,7 @@
         .success-btn:hover { background:#16a34a; }
     </style>
 
-    {{-- ============ SUCCESS POPUP (after payment) ============ --}}
+    {{-- SUCCESS POPUP (after payment) --}}
     @if (session('payment_success'))
         <div class="success-overlay show" id="successOverlayDash">
             <div class="success-card">
@@ -91,8 +91,8 @@
         </div>
         <div class="stat">
             <div class="label">Lease Status</div>
-            <div class="value">—</div>
-            <div class="trend">No lease</div>
+            <div class="value">{{ $leases->count() }}</div>
+            <div class="trend">{{ $leases->count() }} document(s)</div>
         </div>
         <div class="stat">
             <div class="label">Open Requests</div>
@@ -109,15 +109,60 @@
     <div class="quick-actions">
         <a href="{{ route('tenant.pay') }}" class="btn btn-primary">💳 Pay Rent</a>
         <button class="btn btn-outline" onclick="openRequestModal()">🛠 Submit Request</button>
-        <button class="btn btn-outline">📄 View Lease</button>
+        <a href="{{ route('tenant.files') }}" class="btn btn-outline">📄 View Lease</a>
         <button class="btn btn-outline">📊 Report Payment</button>
     </div>
 
+    {{-- ============ LEASE PANEL (with shared leases) ============ --}}
     <div class="panel">
         <h3>Lease</h3>
-        <div class="empty">No lease yet. Your landlord hasn't shared a lease with you.</div>
+
+        @if ($leases->isEmpty())
+            <div class="empty">No lease yet. Your landlord hasn't shared a lease with you.</div>
+        @else
+            <div style="display:flex; flex-direction:column; gap:14px;">
+                @foreach ($leases as $lease)
+                    <div style="border:1px solid #e5e7eb; border-radius:12px; padding:16px; display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+                        <div style="width:44px; height:44px; border-radius:10px; background:#fee2e2; color:#dc2626; display:flex; align-items:center; justify-content:center; font-size:20px;">📄</div>
+
+                        <div style="flex:1; min-width:180px;">
+                            <div style="font-size:15px; font-weight:700; color:#111827;">{{ $lease->title }}</div>
+                            <div style="font-size:12px; color:#6b7280; margin-top:2px;">
+                                Shared {{ $lease->created_at->diffForHumans() }}
+                                @if ($lease->isAcknowledged())
+                                    · <span style="color:#16a34a; font-weight:600;">✓ Acknowledged</span>
+                                @else
+                                    · <span style="color:#d97706; font-weight:600;">⏳ Pending</span>
+                                @endif
+                            </div>
+                            @if ($lease->notes)
+                                <div style="font-size:13px; color:#374151; margin-top:8px; line-height:1.5;">{{ $lease->notes }}</div>
+                            @endif
+                        </div>
+
+                        <div style="display:flex; gap:8px; flex-shrink:0;">
+                            <a href="{{ route('tenant.leases.download', $lease) }}"
+                               style="padding:8px 14px; border-radius:8px; border:1px solid #e5e7eb; background:#fff; color:#374151; text-decoration:none; font-size:13px; font-weight:600;">
+                                ⬇ Download
+                            </a>
+
+                            @if (!$lease->isAcknowledged())
+                                <form method="POST" action="{{ route('tenant.leases.acknowledge', $lease) }}" style="margin:0;">
+                                    @csrf
+                                    <button type="submit"
+                                            style="padding:8px 14px; border-radius:8px; border:none; background:#22c55e; color:#fff; font-size:13px; font-weight:600; cursor:pointer;">
+                                        ✓ Acknowledge
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
     </div>
 
+    {{-- ============ RECENT TRANSACTIONS ============ --}}
     <div class="panel">
         <h3>Recent Transactions</h3>
         <table>
@@ -146,6 +191,7 @@
         </table>
     </div>
 
+    {{-- ============ MAINTENANCE REQUESTS ============ --}}
     <div class="panel">
         <h3>Maintenance Requests</h3>
 
@@ -177,6 +223,7 @@
         @endif
     </div>
 
+    {{-- ============ RENT REPORTING CTA ============ --}}
     <div class="panel" style="display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;">
         <div>
             <h3 style="margin-bottom:6px;">Rent Reporting &amp; Credit Boost</h3>
@@ -185,18 +232,16 @@
         <button class="btn btn-primary">Enroll</button>
     </div>
 
-    {{-- ============ LEASE DOCUMENTS (with uploader) ============ --}}
+    {{-- ============ LEASE DOCUMENTS ============ --}}
     <div class="panel">
         <h3>Lease Documents</h3>
 
-        {{-- Hidden file input + form --}}
         <form method="POST" action="{{ route('tenant.documents.store') }}" enctype="multipart/form-data" id="uploadForm">
             @csrf
             <input type="file" name="document" id="documentInput" style="display:none;"
                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
         </form>
 
-        {{-- Click-to-upload box --}}
         <div class="lease-upload" onclick="document.getElementById('documentInput').click()">
             📎 Click to upload lease documents
             <div style="font-size:12px; color:#cbd5e1; margin-top:6px;">
@@ -208,27 +253,23 @@
             <div style="color:#ef4444; font-size:13px; margin-top:8px;">{{ $message }}</div>
         @enderror
 
-        {{-- Uploaded documents list --}}
         @if ($documents->isNotEmpty())
             <div style="margin-top:20px; display:flex; flex-direction:column; gap:10px;">
                 @foreach ($documents as $doc)
                     <div style="display:flex; align-items:center; gap:14px; padding:14px; border:1px solid #f3f4f6; border-radius:12px;">
-
-                        {{-- Icon --}}
                         <div style="width:40px; height:40px; border-radius:10px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:18px;
-                            @if($doc->icon === 'pdf')   background:#fee2e2;
+                            @if($doc->icon === 'pdf') background:#fee2e2;
                             @elseif($doc->icon === 'image') background:#dbeafe;
-                            @elseif($doc->icon === 'doc')   background:#e0e7ff;
+                            @elseif($doc->icon === 'doc') background:#e0e7ff;
                             @else background:#f3f4f6;
                             @endif">
-                            @if ($doc->icon === 'pdf')   📄
+                            @if ($doc->icon === 'pdf') 📄
                             @elseif ($doc->icon === 'image') 🖼️
-                            @elseif ($doc->icon === 'doc')   📝
+                            @elseif ($doc->icon === 'doc') 📝
                             @else 📎
                             @endif
                         </div>
 
-                        {{-- Info --}}
                         <div style="flex:1; min-width:0;">
                             <div style="font-size:14px; font-weight:600; color:#111827; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
                                 {{ $doc->original_name }}
@@ -238,7 +279,6 @@
                             </div>
                         </div>
 
-                        {{-- Actions --}}
                         <div style="display:flex; gap:6px; flex-shrink:0;">
                             <a href="{{ route('tenant.documents.download', $doc) }}"
                                style="width:32px; height:32px; border-radius:8px; border:1px solid #e5e7eb; display:flex; align-items:center; justify-content:center; color:#6b7280; text-decoration:none;"
@@ -253,7 +293,6 @@
                                         title="Delete">✕</button>
                             </form>
                         </div>
-
                     </div>
                 @endforeach
             </div>
@@ -307,7 +346,6 @@
         </div>
     </div>
 
-    {{-- ============ MODAL SCRIPTS ============ --}}
     <script>
         function openRequestModal()  { document.getElementById('requestModal').style.display = 'flex'; }
         function closeRequestModal() { document.getElementById('requestModal').style.display = 'none'; }
@@ -319,7 +357,6 @@
                 if (e.target === m) m.style.display = 'none';
             });
 
-            // Auto-submit the upload form when a file is selected
             var input = document.getElementById('documentInput');
             if (input) {
                 input.addEventListener('change', function () {

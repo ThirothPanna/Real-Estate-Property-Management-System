@@ -12,12 +12,24 @@
             <p style="color:#6b7280; font-size:14px;">Update {{ $property->name }}.</p>
         </div>
 
+        @if ($errors->any())
+            <div style="background:#fef2f2; color:#dc2626; padding:12px 16px; border-radius:10px; margin-bottom:16px; font-size:14px;">
+                <strong>Validation errors:</strong>
+                <ul style="margin:6px 0 0 20px;">
+                    @foreach ($errors->all() as $e)
+                        <li>{{ $e }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         @if (session('status'))
             <div style="background:#dcfce7; color:#16a34a; padding:12px 16px; border-radius:10px; margin-bottom:16px; font-size:14px;">
                 {{ session('status') }}
             </div>
         @endif
 
+        {{-- ==================== MAIN FORM ==================== --}}
         <form method="POST" action="{{ route('landlord.properties.update', $property) }}" enctype="multipart/form-data">
             @csrf
             @method('PATCH')
@@ -39,7 +51,7 @@
                     <div>
                         <label style="display:block; font-size:12px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:.4px; margin-bottom:6px;">Street Address *</label>
                         <input type="text" name="address" required value="{{ old('address', $property->address) }}"
-                               style="width:100%; padding:12px 14px; border:1px solid #e5e7eb; border-radius:10px; font-size:14px; outline:none;">
+                               style="width:100%; padding:12px 14px; border:1px solid #e5e7eb; border-radius:10px; font-size:14px;">
                     </div>
                     <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;">
                         <div>
@@ -114,47 +126,6 @@
                 </div>
             </div>
 
-            {{-- Existing Photos --}}
-            <div class="panel">
-                <h3>Current Photos ({{ $property->photos->count() }} / 10)</h3>
-                <p style="color:#6b7280; font-size:13px; margin-bottom:14px;">
-                    Click ★ to set a photo as cover. Click ✕ to delete.
-                </p>
-
-                @if ($property->photos->isEmpty())
-                    <div style="color:#9ca3af; font-size:13px; padding:20px; text-align:center; border:2px dashed #e5e7eb; border-radius:10px;">
-                        No photos yet. Add some below.
-                    </div>
-                @else
-                    <div style="display:flex; gap:12px; flex-wrap:wrap;">
-                        @foreach ($property->photos as $photo)
-                            <div style="width:120px; height:120px; border-radius:12px; overflow:hidden; position:relative; border:2px solid {{ $photo->is_cover ? '#22c55e' : '#e5e7eb' }};">
-                                <img src="{{ $photo->url }}" style="width:100%;height:100%;object-fit:cover;display:block;">
-
-                                {{-- Set cover --}}
-                                @if (!$photo->is_cover)
-                                    <form method="POST" action="{{ route('landlord.properties.photos.cover', $photo) }}" style="margin:0;">
-                                        @csrf @method('PATCH')
-                                        <button type="submit" title="Set as cover"
-                                                style="position:absolute;top:6px;left:6px;background:#fff;border:1px solid #e5e7eb;width:22px;height:22px;border-radius:50%;cursor:pointer;font-size:12px;line-height:1;color:#9ca3af;">☆</button>
-                                    </form>
-                                @else
-                                    <div style="position:absolute;top:6px;left:6px;background:#22c55e;color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;">★ Cover</div>
-                                @endif
-
-                                {{-- Delete --}}
-                                <form method="POST" action="{{ route('landlord.properties.photos.destroy', $photo) }}"
-                                      onsubmit="return confirm('Delete this photo?');" style="margin:0;">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" title="Delete"
-                                            style="position:absolute;top:6px;right:6px;background:#ef4444;color:#fff;border:none;width:22px;height:22px;border-radius:50%;cursor:pointer;font-size:12px;line-height:1;">✕</button>
-                                </form>
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
-            </div>
-
             {{-- Add New Photos --}}
             <div class="panel">
                 <h3>Add New Photos</h3>
@@ -162,22 +133,32 @@
                     JPG, PNG, WEBP — max 4 MB each. Up to 10 total per property.
                 </p>
 
-                <input type="file" name="photos[]" id="photoInput" accept="image/*" multiple style="display:none;">
+                <div style="position:relative; display:inline-block;">
+                    <input type="file" name="photos[]" id="photoInput"
+                           accept="image/*" multiple
+                           style="position:absolute; inset:0; opacity:0; cursor:pointer; z-index:2; width:100%; height:160px;">
 
-                <div id="photoPreviewGrid" style="display:flex; gap:12px; flex-wrap:wrap;"></div>
-
-                <div onclick="document.getElementById('photoInput').click()"
-                     style="width:120px; height:120px; border-radius:12px; border:2px dashed #d1d5db; display:inline-flex; align-items:center; justify-content:center; flex-direction:column; gap:4px; cursor:pointer; color:#9ca3af; background:#f9fafb; margin-top:12px;">
-                    <span style="font-size:24px;">📎</span>
-                    <span style="font-size:11px;">Add photos</span>
+                    <div id="uploadTile"
+                         style="width:280px; height:160px; border-radius:14px;
+                                border:2px dashed #d1d5db;
+                                display:flex; flex-direction:column;
+                                align-items:center; justify-content:center; gap:8px;
+                                color:#6b7280; background:#f9fafb;
+                                transition:border-color .15s, background .15s;">
+                        <span style="font-size:36px;">📎</span>
+                        <div style="font-size:14px; font-weight:600; color:#111827;">Click to upload</div>
+                        <div style="font-size:12px;">or drag and drop</div>
+                    </div>
                 </div>
+
+                <div id="photoPreviewGrid" style="display:flex; gap:12px; flex-wrap:wrap; margin-top:16px;"></div>
             </div>
 
             {{-- Location --}}
             <div class="panel">
                 <h3>Location</h3>
                 <p style="color:#6b7280; font-size:13px; margin-bottom:14px;">
-                    The map updates live as you change the address above.
+                    The map updates live as you type the address above.
                 </p>
 
                 <div style="border-radius:14px; overflow:hidden; border:1px solid #e5e7eb; margin-bottom:14px;">
@@ -185,23 +166,19 @@
                             src="{{ $property->map_embed_url }}"
                             width="100%" height="320"
                             style="border:0; display:block;"
-                            allowfullscreen=""
-                            loading="lazy"
-                            referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            loading="lazy"></iframe>
                 </div>
 
-                <div style="background:#f9fafb; padding:14px; border-radius:10px; border:1px solid #e5e7eb;">
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
-                        <div>
-                            <label style="display:block; font-size:12px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:.4px; margin-bottom:6px;">Latitude</label>
-                            <input type="text" name="latitude" id="latField" value="{{ old('latitude', $property->latitude) }}"
-                                   style="width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:13px; outline:none;">
-                        </div>
-                        <div>
-                            <label style="display:block; font-size:12px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:.4px; margin-bottom:6px;">Longitude</label>
-                            <input type="text" name="longitude" id="lngField" value="{{ old('longitude', $property->longitude) }}"
-                                   style="width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:13px; outline:none;">
-                        </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+                    <div>
+                        <label style="display:block; font-size:12px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:.4px; margin-bottom:6px;">Latitude</label>
+                        <input type="text" name="latitude" id="latField" value="{{ old('latitude', $property->latitude) }}"
+                               style="width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:13px;">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:12px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:.4px; margin-bottom:6px;">Longitude</label>
+                        <input type="text" name="longitude" id="lngField" value="{{ old('longitude', $property->longitude) }}"
+                               style="width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:8px; font-size:13px;">
                     </div>
                 </div>
             </div>
@@ -211,26 +188,99 @@
                 <button type="submit" class="btn btn-primary">Save Changes</button>
             </div>
         </form>
+
+        {{-- ==================== CURRENT PHOTOS (OUTSIDE main form) ==================== --}}
+        <div class="panel" style="margin-bottom:40px;">
+            <h3>Current Photos ({{ $property->photos->count() }} / 10)</h3>
+            <p style="color:#6b7280; font-size:13px; margin-bottom:14px;">
+                Click ★ to set a photo as cover. Click ✕ to delete.
+            </p>
+
+            @if ($property->photos->isEmpty())
+                <div style="color:#9ca3af; font-size:13px; padding:20px; text-align:center; border:2px dashed #e5e7eb; border-radius:10px;">
+                    No photos yet. Add some above.
+                </div>
+            @else
+                <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                    @foreach ($property->photos as $photo)
+                        <div style="width:140px; height:140px; border-radius:12px; overflow:hidden; position:relative; border:2px solid {{ $photo->is_cover ? '#22c55e' : '#e5e7eb' }}; background:#fff;">
+
+                            <img src="{{ $photo->url }}"
+                                 alt=""
+                                 style="width:100%; height:100%; object-fit:cover; display:block;">
+
+                            @if ($photo->is_cover)
+                                <div style="position:absolute; top:6px; left:6px; background:#22c55e; color:#fff; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:700; z-index:5;">
+                                    ★ Cover
+                                </div>
+                            @else
+                                <form method="POST" action="{{ route('landlord.properties.photos.cover', $photo) }}"
+                                      style="position:absolute; top:6px; left:6px; margin:0; z-index:10;">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" title="Set as cover"
+                                            style="background:#fff; border:1px solid #d1d5db; width:26px; height:26px; border-radius:50%; cursor:pointer; font-size:14px; line-height:1; color:#6b7280; display:flex; align-items:center; justify-content:center; padding:0;">
+                                        ☆
+                                    </button>
+                                </form>
+                            @endif
+
+                            <form method="POST" action="{{ route('landlord.properties.photos.destroy', $photo) }}"
+                                  onsubmit="return confirm('Delete this photo?');"
+                                  style="position:absolute; top:6px; right:6px; margin:0; z-index:10;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" title="Delete"
+                                        style="background:#ef4444; color:#fff; border:none; width:26px; height:26px; border-radius:50%; cursor:pointer; font-size:13px; line-height:1; padding:0; display:flex; align-items:center; justify-content:center;">
+                                    ✕
+                                </button>
+                            </form>
+
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+
     </div>
 
     <script>
+        // ==================== PHOTO UPLOAD PREVIEW ====================
         var selectedFiles = [];
+        var photoInput   = document.getElementById('photoInput');
+        var previewGrid  = document.getElementById('photoPreviewGrid');
+        var uploadTile   = document.getElementById('uploadTile');
 
-        document.getElementById('photoInput').addEventListener('change', function () {
-            Array.from(this.files).forEach(f => selectedFiles.push(f));
-            renderPhotoGrid();
-            this.value = '';
-        });
+        if (photoInput && uploadTile) {
+            photoInput.addEventListener('mouseenter', function () {
+                uploadTile.style.borderColor = '#22c55e';
+                uploadTile.style.background  = '#f0fdf4';
+            });
+            photoInput.addEventListener('mouseleave', function () {
+                uploadTile.style.borderColor = '#d1d5db';
+                uploadTile.style.background  = '#f9fafb';
+            });
+
+            photoInput.addEventListener('change', function () {
+                Array.from(this.files).forEach(function (f) {
+                    var isDup = selectedFiles.some(function (existing) {
+                        return existing.name === f.name && existing.size === f.size;
+                    });
+                    if (!isDup) selectedFiles.push(f);
+                });
+                renderPhotoGrid();
+            });
+        }
 
         function renderPhotoGrid() {
-            var grid = document.getElementById('photoPreviewGrid');
-            grid.innerHTML = '';
+            if (!previewGrid) return;
+            previewGrid.innerHTML = '';
 
             selectedFiles.forEach(function (file, i) {
                 var url = URL.createObjectURL(file);
 
                 var tile = document.createElement('div');
-                tile.style.cssText = 'width:120px;height:120px;border-radius:12px;overflow:hidden;position:relative;border:2px solid #e5e7eb;background:#fff;';
+                tile.style.cssText = 'width:130px;height:130px;border-radius:12px;overflow:hidden;position:relative;border:1px solid #e5e7eb;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.06);';
 
                 var img = document.createElement('img');
                 img.src = url;
@@ -240,15 +290,19 @@
                 var remove = document.createElement('button');
                 remove.type = 'button';
                 remove.textContent = '✕';
-                remove.style.cssText = 'position:absolute;top:6px;right:6px;background:#ef4444;color:#fff;border:none;width:22px;height:22px;border-radius:50%;cursor:pointer;font-size:12px;line-height:1;';
-                remove.onclick = function (e) { e.stopPropagation(); selectedFiles.splice(i, 1); renderPhotoGrid(); };
+                remove.style.cssText = 'position:absolute;top:6px;right:6px;background:#ef4444;color:#fff;border:none;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:12px;line-height:1;';
+                remove.onclick = function (e) {
+                    e.stopPropagation();
+                    selectedFiles.splice(i, 1);
+                    renderPhotoGrid();
+                };
                 tile.appendChild(remove);
 
-                grid.appendChild(tile);
+                previewGrid.appendChild(tile);
             });
         }
 
-        // Live map
+        // ==================== LIVE MAP ====================
         function buildAddress() {
             var parts = [
                 document.querySelector('input[name="address"]')?.value || '',
@@ -263,20 +317,23 @@
         function updateMap() {
             var address = buildAddress();
             if (!address) return;
-
             var lat = document.getElementById('latField').value.trim();
             var lng = document.getElementById('lngField').value.trim();
-
             var query = (lat && lng) ? (lat + ',' + lng) : address;
-            document.getElementById('mapPreview').src = 'https://www.google.com/maps?q=' + encodeURIComponent(query) + '&output=embed';
+            var mapFrame = document.getElementById('mapPreview');
+            if (mapFrame) {
+                mapFrame.src = 'https://www.google.com/maps?q=' + encodeURIComponent(query) + '&output=embed';
+            }
         }
 
         ['address', 'city', 'state', 'zip', 'country'].forEach(function (field) {
             var input = document.querySelector('input[name="' + field + '"]');
             if (input) input.addEventListener('input', updateMap);
         });
-        document.getElementById('latField').addEventListener('input', updateMap);
-        document.getElementById('lngField').addEventListener('input', updateMap);
+        var latF = document.getElementById('latField');
+        var lngF = document.getElementById('lngField');
+        if (latF) latF.addEventListener('input', updateMap);
+        if (lngF) lngF.addEventListener('input', updateMap);
     </script>
 
 @endsection

@@ -36,18 +36,11 @@
             letter-spacing: 1.5px;
         }
         .brand-logo {
-            width: 42px;
-            height: 42px;
-            background: #22c55e;
-            border-radius: 10px;
-            display: inline-block;
-            vertical-align: middle;
-            margin-right: 12px;
-            text-align: center;
-            line-height: 42px;
-            color: #fff;
-            font-size: 22px;
-            font-weight: 800;
+            display: block;
+            width: 190px;
+            height: 44px;
+            object-fit: contain;
+            object-position: left center;
         }
         .header-right { text-align: right; }
         .receipt-label {
@@ -205,7 +198,7 @@
     <div class="header">
         <div>
             <div class="brand-name">
-                <span class="brand-logo">N</span>NEKJOUL IMANAGE
+                <img class="brand-logo" src="{{ public_path('images/logo-full-removebg-preview.png') }}" alt="NEKJOUL IMANAGE">
             </div>
             <div class="brand-tag">Rental Management</div>
         </div>

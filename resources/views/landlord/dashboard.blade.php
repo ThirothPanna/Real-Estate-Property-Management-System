@@ -185,7 +185,7 @@
     <div class="dash-header">
         <div>
             <h1>Dashboard</h1>
-            <p>Welcome back, {{ auth()->user()->name }} 🔑</p>
+            <p>Welcome back, {{ auth()->user()->name }}</p>
         </div>
 
         <div class="period-toggle">
@@ -204,7 +204,7 @@
         <div class="kpi-card green">
             <div class="kpi-label">
                 <span>Properties</span>
-                <span class="icon">🏠</span>
+                <span class="icon">▣</span>
             </div>
             <div class="kpi-value">{{ $totalProps }}</div>
             <div class="kpi-bar">
@@ -216,7 +216,7 @@
         <div class="kpi-card teal">
             <div class="kpi-label">
                 <span>Monthly Revenue</span>
-                <span class="icon">💰</span>
+                <span class="icon">$</span>
             </div>
             <div class="kpi-value">${{ number_format($thisMonthCollected, 0) }}</div>
             <div class="kpi-bar">
@@ -228,7 +228,7 @@
         <div class="kpi-card blue">
             <div class="kpi-label">
                 <span>Active Tenants</span>
-                <span class="icon">👥</span>
+                <span class="icon">◎</span>
             </div>
             <div class="kpi-value">{{ $activeTenantCount }}</div>
             <div class="kpi-bar">
@@ -319,10 +319,10 @@
                     @foreach ($recentActivity as $n)
                         <div class="activity-item">
                             <div class="activity-icon {{ $n->icon }}">
-                                @if ($n->icon === 'payment') 💳
-                                @elseif ($n->icon === 'request') 🛠
-                                @elseif ($n->icon === 'lease') 📄
-                                @else 🔔
+                                @if ($n->icon === 'payment') $
+                                @elseif ($n->icon === 'request') ✂
+                                @elseif ($n->icon === 'lease') ▣
+                                @else ◉
                                 @endif
                             </div>
                             <div class="activity-body">

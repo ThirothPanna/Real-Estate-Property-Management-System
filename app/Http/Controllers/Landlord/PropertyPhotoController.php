@@ -1,9 +1,8 @@
-
 <?php
-
 namespace App\Http\Controllers\Landlord;
 
 use App\Http\Controllers\Controller;
+use App\Models\Property;
 use App\Models\PropertyPhoto;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -12,41 +11,34 @@ class PropertyPhotoController extends Controller
 {
     public function destroy(PropertyPhoto $photo)
     {
-        $this->checkOwnership($photo);
+        $this->checkOwnership($photo->property);
 
         if (Storage::disk('public')->exists($photo->file_path)) {
             Storage::disk('public')->delete($photo->file_path);
         }
 
-        $wasCover = $photo->is_cover;
-        $property = $photo->property;
-
         $photo->delete();
 
-        if ($wasCover) {
-            $next = $property->photos()->first();
-            if ($next) {
-                $next->update(['is_cover' => true]);
-            }
-        }
-
-        return back()->with('status', 'Photo removed.');
+        return back()->with('status', 'Photo removed successfully.');
     }
 
     public function setCover(PropertyPhoto $photo)
     {
-        $this->checkOwnership($photo);
+        $this->checkOwnership($photo->property);
 
-        $property = $photo->property;
-        $property->photos()->update(['is_cover' => false]);
+        $photo->property()->update([
+            'cover_photo_id' => $photo->id,
+        ]);
+
+        $photo->property->photos()->update(['is_cover' => false]);
         $photo->update(['is_cover' => true]);
 
         return back()->with('status', 'Cover photo updated.');
     }
 
-    private function checkOwnership(PropertyPhoto $photo): void
+    private function checkOwnership(Property $property): void
     {
-        if ($photo->property->landlord_id !== Auth::id()) {
+        if ($property->landlord_id !== Auth::id()) {
             abort(403);
         }
     }

@@ -15,7 +15,7 @@
             font-size: 32px;
         "
     >
-        ⚲
+        ◫
     </div>
     <h1 style="font-size: 24px; font-weight: 700; margin-bottom: 8px">
         Utility Providers

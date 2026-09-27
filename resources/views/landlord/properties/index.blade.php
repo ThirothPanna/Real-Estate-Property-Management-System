@@ -16,17 +16,17 @@
             <p style="color:#6b7280; font-size:14px;">{{ $properties->total() }} total properties in your portfolio.</p>
         </div>
 
-        <a href="{{ route('landlord.properties.create') }}" class="btn btn-primary">➕ Add Property</a>
+        <a href="{{ route('landlord.properties.create') }}" class="btn btn-primary">Add Property</a>
     </div>
 
     @if ($properties->isEmpty())
         <div class="panel">
             <div class="empty">
-                <div style="font-size:52px; margin-bottom:16px;">🏠</div>
+                <div style="font-size:52px; margin-bottom:16px; color:#6b7280;">▣</div>
                 <div style="font-size:16px; font-weight:600; color:#111827; margin-bottom:6px;">No properties yet</div>
                 <div style="margin-bottom:20px;">Start by adding your first rental property.</div>
                 <a href="{{ route('landlord.properties.create') }}" class="btn btn-primary" style="display:inline-flex;">
-                    ➕ Add Your First Property
+                    Add Your First Property
                 </a>
             </div>
         </div>
@@ -53,10 +53,10 @@
                         <div style="font-size:13px; color:#6b7280; margin-bottom:16px; line-height:1.5;">{{ $prop->full_address }}</div>
 
                         <div style="display:flex; gap:16px; margin-bottom:16px; font-size:13px; color:#6b7280;">
-                            <span>🛏 {{ $prop->bedrooms }} bed</span>
-                            <span>🛁 {{ $prop->bathrooms }} bath</span>
+                            <span>◫ {{ $prop->bedrooms }} bed</span>
+                            <span>◍ {{ $prop->bathrooms }} bath</span>
                             @if ($prop->square_feet)
-                                <span>📐 {{ number_format($prop->square_feet) }} ft²</span>
+                                <span>▤ {{ number_format($prop->square_feet) }} ft²</span>
                             @endif
                         </div>
 

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Notifications – TenantCloud')
+@section('title', 'Notifications – NEKJOUL IMANAGE')
 
 @section('content')
 
@@ -121,18 +121,18 @@
         </div>
 
         <div class="notif-actions">
-            <form method="POST" action="{{ route('tenant.notifications.markAllRead') }}">
+            <form method="POST" action="{{ route('landlord.notifications.markAllRead') }}">
                 @csrf
                 <button type="submit">✓ Mark all read</button>
             </form>
-            <form method="POST" action="{{ route('tenant.notifications.markAllUnread') }}">
+            <form method="POST" action="{{ route('landlord.notifications.markAllUnread') }}">
                 @csrf
                 <button type="submit">○ Mark all unread</button>
             </form>
-            <form method="POST" action="{{ route('tenant.notifications.destroyAll') }}"
+            <form method="POST" action="{{ route('landlord.notifications.destroyAll') }}"
                   onsubmit="return confirm('Delete ALL notifications? This cannot be undone.');">
                 @csrf
-                <button type="submit" class="danger">Delete all</button>
+                <button type="submit" class="danger">🗑 Delete all</button>
             </form>
         </div>
     </div>
@@ -144,28 +144,28 @@
     @endif
 
     <div class="notif-tabs">
-        <a href="{{ route('tenant.notifications', array_merge(request()->except('tab', 'page'), ['tab' => 'all'])) }}"
+        <a href="{{ route('landlord.notifications', array_merge(request()->except('tab', 'page'), ['tab' => 'all'])) }}"
            class="notif-tab {{ $tab === 'all' ? 'active' : '' }}">
             All <span class="badge">{{ $counts['all'] }}</span>
         </a>
-        <a href="{{ route('tenant.notifications', array_merge(request()->except('tab', 'page'), ['tab' => 'unread'])) }}"
+        <a href="{{ route('landlord.notifications', array_merge(request()->except('tab', 'page'), ['tab' => 'unread'])) }}"
            class="notif-tab {{ $tab === 'unread' ? 'active' : '' }}">
             Unread <span class="badge">{{ $counts['unread'] }}</span>
         </a>
-        <a href="{{ route('tenant.notifications', array_merge(request()->except('tab', 'page'), ['tab' => 'read'])) }}"
+        <a href="{{ route('landlord.notifications', array_merge(request()->except('tab', 'page'), ['tab' => 'read'])) }}"
            class="notif-tab {{ $tab === 'read' ? 'active' : '' }}">
             Read <span class="badge">{{ $counts['read'] }}</span>
         </a>
     </div>
 
-    <form method="GET" action="{{ route('tenant.notifications') }}" class="notif-filters">
+    <form method="GET" action="{{ route('landlord.notifications') }}" class="notif-filters">
         <input type="hidden" name="tab" value="{{ $tab }}">
         <input type="text" name="search" class="filter-search" value="{{ $search }}" placeholder="Search notifications…">
         <label class="date-field"><span>From</span><input type="date" name="from" value="{{ $from }}"></label>
         <label class="date-field"><span>To</span><input type="date" name="to" value="{{ $to }}"></label>
         <button type="submit">Filter</button>
         @if ($search || $from || $to)
-            <a href="{{ route('tenant.notifications', ['tab' => $tab]) }}" class="clear">✕ Clear</a>
+            <a href="{{ route('landlord.notifications', ['tab' => $tab]) }}" class="clear">✕ Clear</a>
         @endif
     </form>
 
@@ -216,18 +216,18 @@
 
                     <div class="notif-buttons">
                         @if ($n->isUnread())
-                            <form method="POST" action="{{ route('tenant.notifications.read', $n) }}">
+                            <form method="POST" action="{{ route('landlord.notifications.read', $n) }}">
                                 @csrf
                                 <button type="submit" title="Mark as read">✓</button>
                             </form>
                         @else
-                            <form method="POST" action="{{ route('tenant.notifications.unread', $n) }}">
+                            <form method="POST" action="{{ route('landlord.notifications.unread', $n) }}">
                                 @csrf
                                 <button type="submit" title="Mark as unread">○</button>
                             </form>
                         @endif
 
-                        <form method="POST" action="{{ route('tenant.notifications.destroy', $n) }}"
+                        <form method="POST" action="{{ route('landlord.notifications.destroy', $n) }}"
                               onsubmit="return confirm('Delete this notification?');">
                             @csrf
                             <button type="submit" class="danger" title="Delete">✕</button>

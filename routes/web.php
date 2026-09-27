@@ -1,18 +1,26 @@
 <?php
 
+use App\Http\Controllers\Landlord\AnnouncementController;
 use App\Http\Controllers\Landlord\DashboardController as LandlordDashboard;
+use App\Http\Controllers\Landlord\DocumentController;
+use App\Http\Controllers\Landlord\LeaseController as LandlordLeaseController;
+use App\Http\Controllers\Landlord\NotificationController as LandlordNotificationController;
+use App\Http\Controllers\Landlord\PaymentController;
 use App\Http\Controllers\Landlord\PropertyController;
 use App\Http\Controllers\Landlord\PropertyPhotoController;
+use App\Http\Controllers\Landlord\ReportController;
+use App\Http\Controllers\Landlord\RequestController as LandlordRequestController;
+use App\Http\Controllers\Landlord\SettingsController as LandlordSettingsController;
 use App\Http\Controllers\Landlord\TenantController;
-use App\Http\Controllers\ProfileController as GlobalProfileController;
 use App\Http\Controllers\Tenant\DashboardController as TenantDashboard;
+use App\Http\Controllers\Tenant\LeaseController as TenantLeaseController;
 use App\Http\Controllers\Tenant\LeaseDocumentController;
 use App\Http\Controllers\Tenant\NotificationController;
-use App\Http\Controllers\Tenant\PaymentController;
+use App\Http\Controllers\Tenant\PaymentController as TenantPaymentController;
 use App\Http\Controllers\Tenant\ProfileController;
 use App\Http\Controllers\Tenant\ReceiptController;
-use App\Http\Controllers\Tenant\RequestController;
-use App\Http\Controllers\Tenant\SettingsController;
+use App\Http\Controllers\Tenant\RequestController as TenantRequestController;
+use App\Http\Controllers\Tenant\SettingsController as TenantSettingsController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +28,7 @@ Route::get('/', function () {
     if (Auth::check()) {
         /** @var \App\Models\User $user */
         $user = Auth::user();
+
         return redirect()->route($user->dashboardRoute());
     }
     return view('landing');
@@ -32,18 +41,6 @@ Route::get('/auth/{provider}/redirect', function ($provider) {
 Route::get('/auth/{provider}/callback', function ($provider) {
     return redirect()->route('login');
 })->name('social.callback');
-
-Route::get('/dashboard', function () {
-    /** @var \App\Models\User $user */
-    $user = Auth::user();
-    return redirect()->route($user->dashboardRoute());
-})->middleware('auth')->name('dashboard');
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [GlobalProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [GlobalProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [GlobalProfileController::class, 'destroy'])->name('profile.destroy');
-});
 
 /* ================= TENANT AREA ================= */
 Route::middleware(['auth', 'role:tenant'])
@@ -69,7 +66,7 @@ Route::middleware(['auth', 'role:tenant'])
     Route::post('/notifications/mark-all-unread',       [NotificationController::class, 'markAllUnread'])->name('notifications.markAllUnread');
     Route::post('/notifications/delete-all',            [NotificationController::class, 'destroyAll'])->name('notifications.destroyAll');
 
-    // Lease documents
+    // Lease documents (uploaded by tenant)
     Route::post('/documents', [LeaseDocumentController::class, 'store'])->name('documents.store');
     Route::get('/documents/{document}/download', [LeaseDocumentController::class, 'download'])->name('documents.download');
     Route::delete('/documents/{document}', [LeaseDocumentController::class, 'destroy'])->name('documents.destroy');
@@ -78,20 +75,24 @@ Route::middleware(['auth', 'role:tenant'])
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
     // Settings
-    Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
-    Route::patch('/settings/profile', [SettingsController::class, 'updateProfile'])->name('settings.profile');
-    Route::patch('/settings/password', [SettingsController::class, 'updatePassword'])->name('settings.password');
-    Route::post('/settings/avatar', [SettingsController::class, 'updateAvatar'])->name('settings.avatar');
+    Route::get('/settings', [TenantSettingsController::class, 'index'])->name('settings');
+    Route::patch('/settings/profile', [TenantSettingsController::class, 'updateProfile'])->name('settings.profile');
+    Route::patch('/settings/password', [TenantSettingsController::class, 'updatePassword'])->name('settings.password');
+    Route::post('/settings/avatar', [TenantSettingsController::class, 'updateAvatar'])->name('settings.avatar');
 
-    // Maintenance requests
-    Route::post('/requests', [RequestController::class, 'store'])->name('requests.store');
+    // Maintenance requests (tenant — submit)
+    Route::post('/requests', [TenantRequestController::class, 'store'])->name('requests.store');
 
     // Payments
-    Route::get('/pay', [PaymentController::class, 'create'])->name('pay');
-    Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
+    Route::get('/pay', [TenantPaymentController::class, 'create'])->name('pay');
+    Route::post('/payments', [TenantPaymentController::class, 'store'])->name('payments.store');
 
     // Receipts
     Route::get('/receipts/{payment}/download', [ReceiptController::class, 'download'])->name('receipts.download');
+
+    // Leases
+    Route::get('/leases/{lease}/download', [TenantLeaseController::class, 'download'])->name('leases.download');
+    Route::post('/leases/{lease}/acknowledge', [TenantLeaseController::class, 'acknowledge'])->name('leases.acknowledge');
 });
 
 /* ================= LANDLORD AREA ================= */
@@ -115,7 +116,7 @@ Route::middleware(['auth', 'role:landlord'])
     Route::delete('/properties/photos/{photo}', [PropertyPhotoController::class, 'destroy'])->name('properties.photos.destroy');
     Route::patch('/properties/photos/{photo}/cover', [PropertyPhotoController::class, 'setCover'])->name('properties.photos.cover');
 
-    // Tenant management
+    // Tenants
     Route::get('/tenants', [TenantController::class, 'index'])->name('tenants.index');
     Route::get('/tenants/invite', [TenantController::class, 'invite'])->name('tenants.invite');
     Route::post('/tenants', [TenantController::class, 'store'])->name('tenants.store');
@@ -123,6 +124,47 @@ Route::middleware(['auth', 'role:landlord'])
     Route::get('/tenants/{tenancy}/edit', [TenantController::class, 'edit'])->name('tenants.edit');
     Route::patch('/tenants/{tenancy}', [TenantController::class, 'update'])->name('tenants.update');
     Route::delete('/tenants/{tenancy}', [TenantController::class, 'destroy'])->name('tenants.destroy');
+
+    // Maintenance requests
+    Route::get('/requests', [LandlordRequestController::class, 'index'])->name('requests.index');
+    Route::patch('/requests/{maintenanceRequest}', [LandlordRequestController::class, 'updateStatus'])->name('requests.updateStatus');
+
+    // Payments
+    Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
+
+    // Settings
+    Route::get('/settings', [LandlordSettingsController::class, 'index'])->name('settings');
+    Route::patch('/settings/profile', [LandlordSettingsController::class, 'updateProfile'])->name('settings.profile');
+    Route::patch('/settings/password', [LandlordSettingsController::class, 'updatePassword'])->name('settings.password');
+    Route::post('/settings/avatar', [LandlordSettingsController::class, 'updateAvatar'])->name('settings.avatar');
+
+    // Reports
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/export', [ReportController::class, 'exportCsv'])->name('reports.export');
+
+    // Announcements
+    Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
+    Route::post('/announcements', [AnnouncementController::class, 'store'])->name('announcements.store');
+    Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy'])->name('announcements.destroy');
+
+    // Documents
+    Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index');
+    Route::post('/documents', [DocumentController::class, 'store'])->name('documents.store');
+    Route::delete('/documents/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy');
+
+    // Leases
+    Route::get('/leases', [LandlordLeaseController::class, 'index'])->name('leases.index');
+    Route::post('/leases', [LandlordLeaseController::class, 'store'])->name('leases.store');
+    Route::delete('/leases/{lease}', [LandlordLeaseController::class, 'destroy'])->name('leases.destroy');
+
+    // Notifications ← NEW
+    Route::get('/notifications', [LandlordNotificationController::class, 'index'])->name('notifications');
+    Route::post('/notifications/{notification}/read',   [LandlordNotificationController::class, 'markRead'])->name('notifications.read');
+    Route::post('/notifications/{notification}/unread', [LandlordNotificationController::class, 'markUnread'])->name('notifications.unread');
+    Route::post('/notifications/{notification}/delete', [LandlordNotificationController::class, 'destroy'])->name('notifications.destroy');
+    Route::post('/notifications/mark-all-read',         [LandlordNotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
+    Route::post('/notifications/mark-all-unread',       [LandlordNotificationController::class, 'markAllUnread'])->name('notifications.markAllUnread');
+    Route::post('/notifications/delete-all',            [LandlordNotificationController::class, 'destroyAll'])->name('notifications.destroyAll');
 });
 
 require __DIR__.'/auth.php';
