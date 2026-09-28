@@ -14,11 +14,11 @@
 
         @if ($properties->isEmpty())
             <div class="panel" style="text-align:center; padding:40px;">
-                <div style="font-size:48px; margin-bottom:12px;">🏠</div>
+                <div style="display:flex; justify-content:center; margin-bottom:12px; color:#16a34a;"><svg aria-hidden="true" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7M5 9v12h14V9M9 21v-7h6v7"/></svg></div>
                 <div style="font-size:16px; font-weight:600; color:#111827; margin-bottom:6px;">No properties yet</div>
                 <div style="margin-bottom:20px; color:#6b7280;">Add a property first, then invite a tenant.</div>
                 <a href="{{ route('landlord.properties.create') }}" class="btn btn-primary" style="display:inline-flex;">
-                    ➕ Add Property
+                    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg> Add Property
                 </a>
             </div>
         @else

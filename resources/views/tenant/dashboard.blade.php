@@ -79,7 +79,7 @@
     @endif
 
     <div class="welcome">
-        <h1>Welcome back, {{ auth()->user()->name }} 👋</h1>
+        <h1>Welcome back, {{ auth()->user()->name }} <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/></svg></h1>
         <p>Set up your tenancy to get started.</p>
     </div>
 
@@ -107,10 +107,10 @@
     </div>
 
     <div class="quick-actions">
-        <a href="{{ route('tenant.pay') }}" class="btn btn-primary">💳 Pay Rent</a>
-        <button class="btn btn-outline" onclick="openRequestModal()">🛠 Submit Request</button>
-        <a href="{{ route('tenant.files') }}" class="btn btn-outline">📄 View Lease</a>
-        <button class="btn btn-outline">📊 Report Payment</button>
+        <a href="{{ route('tenant.pay') }}" class="btn btn-primary"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg> Pay Rent</a>
+        <button class="btn btn-outline" onclick="openRequestModal()"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-7.3 7.3a2.1 2.1 0 0 1-3-3l7.3-7.3a6 6 0 0 1 7.9-7.9z"/></svg> Submit Request</button>
+        <a href="{{ route('tenant.files') }}" class="btn btn-outline"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg> View Lease</a>
+        <button class="btn btn-outline"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg> Report Payment</button>
     </div>
 
     {{-- ============ LEASE PANEL (with shared leases) ============ --}}
@@ -123,16 +123,16 @@
             <div style="display:flex; flex-direction:column; gap:14px;">
                 @foreach ($leases as $lease)
                     <div style="border:1px solid #e5e7eb; border-radius:12px; padding:16px; display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
-                        <div style="width:44px; height:44px; border-radius:10px; background:#fee2e2; color:#dc2626; display:flex; align-items:center; justify-content:center; font-size:20px;">📄</div>
+                        <div style="width:44px; height:44px; border-radius:10px; background:#fee2e2; color:#dc2626; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg></div>
 
                         <div style="flex:1; min-width:180px;">
                             <div style="font-size:15px; font-weight:700; color:#111827;">{{ $lease->title }}</div>
                             <div style="font-size:12px; color:#6b7280; margin-top:2px;">
                                 Shared {{ $lease->created_at->diffForHumans() }}
                                 @if ($lease->isAcknowledged())
-                                    · <span style="color:#16a34a; font-weight:600;">✓ Acknowledged</span>
+                                    · <span style="color:#16a34a; font-weight:600;"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="10"/><path d="m8 12 2.5 2.5L16 9"/></svg> Acknowledged</span>
                                 @else
-                                    · <span style="color:#d97706; font-weight:600;">⏳ Pending</span>
+                                    · <span style="color:#d97706; font-weight:600;"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Pending</span>
                                 @endif
                             </div>
                             @if ($lease->notes)
@@ -143,7 +143,7 @@
                         <div style="display:flex; gap:8px; flex-shrink:0;">
                             <a href="{{ route('tenant.leases.download', $lease) }}"
                                style="padding:8px 14px; border-radius:8px; border:1px solid #e5e7eb; background:#fff; color:#374151; text-decoration:none; font-size:13px; font-weight:600;">
-                                ⬇ Download
+                                <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/></svg> Download
                             </a>
 
                             @if (!$lease->isAcknowledged())
@@ -151,7 +151,7 @@
                                     @csrf
                                     <button type="submit"
                                             style="padding:8px 14px; border-radius:8px; border:none; background:#22c55e; color:#fff; font-size:13px; font-weight:600; cursor:pointer;">
-                                        ✓ Acknowledge
+                                        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="m5 12 4 4L19 6"/></svg> Acknowledge
                                     </button>
                                 </form>
                             @endif
@@ -243,7 +243,7 @@
         </form>
 
         <div class="lease-upload" onclick="document.getElementById('documentInput').click()">
-            📎 Click to upload lease documents
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-4px"><path d="m21.4 11.6-8.5 8.5a6 6 0 0 1-8.5-8.5l9.2-9.2a4 4 0 0 1 5.7 5.7l-9.2 9.2a2 2 0 0 1-2.8-2.8l8.5-8.5"/></svg> Click to upload lease documents
             <div style="font-size:12px; color:#cbd5e1; margin-top:6px;">
                 PDF, JPG, PNG, DOC, DOCX · Max 10 MB
             </div>
@@ -263,10 +263,12 @@
                             @elseif($doc->icon === 'doc') background:#e0e7ff;
                             @else background:#f3f4f6;
                             @endif">
-                            @if ($doc->icon === 'pdf') 📄
-                            @elseif ($doc->icon === 'image') 🖼️
-                            @elseif ($doc->icon === 'doc') 📝
-                            @else 📎
+                            @if ($doc->icon === 'image')
+                                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                            @elseif ($doc->icon === 'doc')
+                                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg>
+                            @else
+                                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
                             @endif
                         </div>
 
@@ -282,7 +284,7 @@
                         <div style="display:flex; gap:6px; flex-shrink:0;">
                             <a href="{{ route('tenant.documents.download', $doc) }}"
                                style="width:32px; height:32px; border-radius:8px; border:1px solid #e5e7eb; display:flex; align-items:center; justify-content:center; color:#6b7280; text-decoration:none;"
-                               title="Download">⬇</a>
+                               title="Download" aria-label="Download document"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/></svg></a>
 
                             <form method="POST" action="{{ route('tenant.documents.destroy', $doc) }}"
                                   onsubmit="return confirm('Delete this document?');" style="display:inline;">
@@ -290,7 +292,7 @@
                                 @method('DELETE')
                                 <button type="submit"
                                         style="width:32px; height:32px; border-radius:8px; border:1px solid #e5e7eb; background:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#6b7280;"
-                                        title="Delete">✕</button>
+                                        title="Delete" aria-label="Delete document"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m18 6-12 12M6 6l12 12"/></svg></button>
                             </form>
                         </div>
                     </div>

@@ -16,17 +16,17 @@
             <p style="color:#6b7280; font-size:14px;">{{ $activeCount }} active tenant(s) across your properties.</p>
         </div>
 
-        <a href="{{ route('landlord.tenants.invite') }}" class="btn btn-primary">➕ Invite Tenant</a>
+        <a href="{{ route('landlord.tenants.invite') }}" class="btn btn-primary"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM20 8v6M23 11h-6"/></svg> Invite Tenant</a>
     </div>
 
     @if ($tenancies->isEmpty())
         <div class="panel">
             <div class="empty">
-                <div style="font-size:52px; margin-bottom:16px;">👥</div>
+                <div style="display:flex; justify-content:center; margin-bottom:16px; color:#6b7280;"><svg aria-hidden="true" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM20 8v6M23 11h-6"/></svg></div>
                 <div style="font-size:16px; font-weight:600; color:#111827; margin-bottom:6px;">No tenants yet</div>
                 <div style="margin-bottom:20px;">Start by inviting your first tenant.</div>
                 <a href="{{ route('landlord.tenants.invite') }}" class="btn btn-primary" style="display:inline-flex;">
-                    ➕ Invite Your First Tenant
+                    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM20 8v6M23 11h-6"/></svg> Invite Your First Tenant
                 </a>
             </div>
         </div>

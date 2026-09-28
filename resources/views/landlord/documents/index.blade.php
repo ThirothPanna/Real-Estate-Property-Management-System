@@ -65,7 +65,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
         }
         .doc-icon.pdf   { background: #fee2e2; }
         .doc-icon.image { background: #dbeafe; }
@@ -140,7 +139,7 @@
             border: 1px dashed #e5e7eb;
             border-radius: 16px;
         }
-        .empty-icon { font-size: 52px; margin-bottom: 16px; }
+        .empty-icon { margin-bottom: 16px; color: #6b7280; }
 
         /* Modal */
         .modal-overlay {
@@ -240,18 +239,18 @@
         </div>
 
         <button class="btn-new" onclick="openUploadModal()">
-            📎 Upload Document
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.4 11.6-8.5 8.5a6 6 0 0 1-8.5-8.5l9.2-9.2a4 4 0 0 1 5.7 5.7l-9.2 9.2a2 2 0 0 1-2.8-2.8l8.5-8.5"/></svg> Upload Document
         </button>
     </div>
 
     {{-- Grid --}}
     @if ($documents->isEmpty())
         <div class="empty">
-            <div class="empty-icon">📁</div>
+            <div class="empty-icon"><svg aria-hidden="true" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M2 10h20"/></svg></div>
             <div>No documents uploaded yet.</div>
             <div style="margin-top:16px;">
                 <button class="btn-new" onclick="openUploadModal()">
-                    📎 Upload your first document
+                    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.4 11.6-8.5 8.5a6 6 0 0 1-8.5-8.5l9.2-9.2a4 4 0 0 1 5.7 5.7l-9.2 9.2a2 2 0 0 1-2.8-2.8l8.5-8.5"/></svg> Upload your first document
                 </button>
             </div>
         </div>
@@ -261,10 +260,12 @@
                 <div class="doc-card">
                     <div class="doc-card-head">
                         <div class="doc-icon {{ $doc->icon }}">
-                            @if ($doc->icon === 'pdf') 📄
-                            @elseif ($doc->icon === 'image') 🖼️
-                            @elseif ($doc->icon === 'doc') 📝
-                            @else 📎
+                            @if ($doc->icon === 'image')
+                                <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                            @elseif ($doc->icon === 'doc')
+                                <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg>
+                            @else
+                                <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
                             @endif
                         </div>
                         <div style="flex:1; min-width:0;">
@@ -273,21 +274,21 @@
                                 {{ $doc->readable_size }} · {{ $doc->created_at->diffForHumans() }}
                             </div>
                             @if ($doc->property)
-                                <div class="doc-property">🏠 {{ $doc->property->name }}</div>
+                                <div class="doc-property"><svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="m3 10 9-7 9 7M5 9v12h14V9M9 21v-7h6v7"/></svg> {{ $doc->property->name }}</div>
                             @else
-                                <div class="doc-property all">📢 All properties</div>
+                                <div class="doc-property all"><svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="m3 11 18-5v12L3 13v-2zM11.6 14.6 14 21l3-1-2.3-6.4"/></svg> All properties</div>
                             @endif
                         </div>
                     </div>
 
                     <div class="doc-actions">
-                        <a href="{{ $doc->url }}" target="_blank" download="{{ $doc->original_name }}">⬇ Download</a>
+                        <a href="{{ $doc->url }}" target="_blank" download="{{ $doc->original_name }}"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/></svg> Download</a>
 
                         <form method="POST" action="{{ route('landlord.documents.destroy', $doc) }}"
                               onsubmit="return confirm('Delete this document?');">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" style="width:100%;">✕ Delete</button>
+                            <button type="submit" style="width:100%;"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6"/></svg> Delete</button>
                         </form>
                     </div>
                 </div>
