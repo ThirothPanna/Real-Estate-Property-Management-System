@@ -275,7 +275,7 @@
             <a href="{{ route('tenant.requests') }}" class="nav-item {{ request()->routeIs('tenant.requests') ? 'active' : '' }}">
                 <span class="nav-icon">✂</span><span class="nav-label">Requests</span>
             </a>
-            <a href="{{ route('tenant.utilities') }}" class="nav-item {{ request()->routeIs('tenant.utilities') ? 'active' : '' }}">
+            <a href="{{ route('tenant.utility-providers.index') }}" class="nav-item {{ request()->routeIs('tenant.utility-providers.*') ? 'active' : '' }}">
                 <span class="nav-icon">◫</span><span class="nav-label">Utility Providers</span>
             </a>
             <a href="{{ route('tenant.applications') }}" class="nav-item {{ request()->routeIs('tenant.applications') ? 'active' : '' }}">
