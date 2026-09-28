@@ -16,7 +16,13 @@
                                 border-gray-200 bg-white
                                 peer-checked:border-[#3f9c3a] peer-checked:bg-[#f0fdf4]
                                 hover:border-[#3f9c3a]">
-                        <div class="text-2xl mb-2">🏠</div>
+                        <div class="mb-2 flex justify-center text-[#3f9c3a]">
+                            <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m3 10 9-7 9 7" />
+                                <path d="M5 9v12h14V9" />
+                                <path d="M9 21v-7h6v7" />
+                            </svg>
+                        </div>
                         <div class="font-semibold text-gray-800 text-[15px]">Tenant</div>
                         <div class="text-xs text-gray-500 mt-1">I rent a property</div>
                     </div>
@@ -31,7 +37,12 @@
                                 border-gray-200 bg-white
                                 peer-checked:border-[#3f9c3a] peer-checked:bg-[#f0fdf4]
                                 hover:border-[#3f9c3a]">
-                        <div class="text-2xl mb-2">🔑</div>
+                        <div class="mb-2 flex justify-center text-[#3f9c3a]">
+                            <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="8" cy="15" r="5" />
+                                <path d="m11.5 11.5 8-8L22 6l-2 2 2 2-3 3-2-2-4 4" />
+                            </svg>
+                        </div>
                         <div class="font-semibold text-gray-800 text-[15px]">Landlord</div>
                         <div class="text-xs text-gray-500 mt-1">I own a property</div>
                     </div>

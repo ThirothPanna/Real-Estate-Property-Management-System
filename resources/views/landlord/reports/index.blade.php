@@ -183,7 +183,12 @@
             </form>
 
             <a href="{{ route('landlord.reports.export', ['year' => $year]) }}" class="btn-export">
-                ⬇ Export CSV
+                <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <path d="m7 10 5 5 5-5" />
+                    <path d="M12 15V3" />
+                </svg>
+                <span>Export CSV</span>
             </a>
         </div>
     </div>
@@ -191,25 +196,25 @@
     {{-- KPI cards --}}
     <div class="rep-kpi-grid">
         <div class="rep-kpi green">
-            <div class="label">Total Revenue <span>💰</span></div>
+            <div class="label">Total Revenue <span aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M16 8h-5a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4H8" /><path d="M12 6v2m0 8v2" /></svg></span></div>
             <div class="value">${{ number_format($totalRevenue, 2) }}</div>
             <div class="sub">{{ $year }} · completed payments</div>
         </div>
 
         <div class="rep-kpi teal">
-            <div class="label">Occupancy Rate <span>🏠</span></div>
+            <div class="label">Occupancy Rate <span aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7" /><path d="M5 9v12h14V9" /><path d="M9 21v-7h6v7" /></svg></span></div>
             <div class="value">{{ $occupancyRate }}%</div>
             <div class="sub">Currently occupied</div>
         </div>
 
         <div class="rep-kpi blue">
-            <div class="label">Average Rent <span>📊</span></div>
+            <div class="label">Average Rent <span aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18" /><path d="M18 17V9" /><path d="M13 17V5" /><path d="M8 17v-3" /></svg></span></div>
             <div class="value">${{ number_format($avgRent, 2) }}</div>
             <div class="sub">Per property</div>
         </div>
 
         <div class="rep-kpi amber">
-            <div class="label">Collection Rate <span>✅</span></div>
+            <div class="label">Collection Rate <span aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="m8 12 2.5 2.5L16 9" /></svg></span></div>
             <div class="value">{{ $collectionRate }}%</div>
             <div class="sub">Of expected yearly rent</div>
         </div>

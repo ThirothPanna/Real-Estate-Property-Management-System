@@ -330,7 +330,6 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 26px;
                 margin-bottom: 20px;
             }
             .feature-card h3 {
@@ -641,7 +640,12 @@
 
                 <div class="features-grid">
                     <div class="feature-card">
-                        <div class="feature-icon">💳</div>
+                        <div class="feature-icon">
+                            <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="5" width="20" height="14" rx="2" />
+                                <path d="M2 10h20M6 15h3" />
+                            </svg>
+                        </div>
                         <h3>Pay Rent Online</h3>
                         <p>
                             Pay securely with card. Get instant PDF receipts.
@@ -650,7 +654,11 @@
                     </div>
 
                     <div class="feature-card">
-                        <div class="feature-icon">🛠</div>
+                        <div class="feature-icon">
+                            <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14.7 6.3a5 5 0 0 0-6.6 6.6L3 18a2.1 2.1 0 0 0 3 3l5.1-5.1a5 5 0 0 0 6.6-6.6L14 13l-3-3z" />
+                            </svg>
+                        </div>
                         <h3>Maintenance Requests</h3>
                         <p>
                             Submit repair requests with priority levels. Track
@@ -659,7 +667,12 @@
                     </div>
 
                     <div class="feature-card">
-                        <div class="feature-icon">📄</div>
+                        <div class="feature-icon">
+                            <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <path d="M14 2v6h6M8 13h8M8 17h8" />
+                            </svg>
+                        </div>
                         <h3>Document Storage</h3>
                         <p>
                             Upload lease agreements, receipts, and documents.
@@ -668,7 +681,12 @@
                     </div>
 
                     <div class="feature-card">
-                        <div class="feature-icon">🔔</div>
+                        <div class="feature-icon">
+                            <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                                <path d="M10 21h4" />
+                            </svg>
+                        </div>
                         <h3>Real-Time Notifications</h3>
                         <p>
                             Get notified the moment something happens —
@@ -677,7 +695,11 @@
                     </div>
 
                     <div class="feature-card">
-                        <div class="feature-icon">📊</div>
+                        <div class="feature-icon">
+                            <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 3v18h18M18 17V9M13 17V5M8 17v-3" />
+                            </svg>
+                        </div>
                         <h3>Payment Insights</h3>
                         <p>
                             See your year-over-year spending, next rent due
@@ -686,7 +708,12 @@
                     </div>
 
                     <div class="feature-card">
-                        <div class="feature-icon">🔒</div>
+                        <div class="feature-icon">
+                            <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" />
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4M12 15v3" />
+                            </svg>
+                        </div>
                         <h3>Secure &amp; Private</h3>
                         <p>
                             Your data is encrypted, your files are stored
