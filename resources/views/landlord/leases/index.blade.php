@@ -56,7 +56,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
             flex-shrink: 0;
         }
         .lease-info { flex: 1; min-width: 200px; }
@@ -113,7 +112,7 @@
             border: 1px dashed #e5e7eb;
             border-radius: 16px;
         }
-        .empty-icon { font-size: 52px; margin-bottom: 16px; }
+        .empty-icon { margin-bottom: 16px; color: #dc2626; }
 
         /* Modal */
         .modal-overlay {
@@ -214,17 +213,17 @@
         </div>
 
         <button class="btn-new" onclick="openLeaseModal()">
-            📄 Create Lease
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg> Create Lease
         </button>
     </div>
 
     @if ($leases->isEmpty())
         <div class="empty">
-            <div class="empty-icon">📄</div>
+            <div class="empty-icon"><svg aria-hidden="true" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg></div>
             <div>No leases created yet.</div>
             <div style="margin-top:16px;">
                 <button class="btn-new" onclick="openLeaseModal()">
-                    📄 Create your first lease
+                    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg> Create your first lease
                 </button>
             </div>
         </div>
@@ -232,7 +231,7 @@
         <div class="lease-list">
             @foreach ($leases as $lease)
                 <div class="lease-card">
-                    <div class="lease-icon">📄</div>
+                    <div class="lease-icon"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg></div>
 
                     <div class="lease-info">
                         <div class="lease-title">{{ $lease->title }}</div>
@@ -246,19 +245,19 @@
                     </div>
 
                     @if ($lease->isAcknowledged())
-                        <span class="badge acknowledged">✓ Acknowledged</span>
+                        <span class="badge acknowledged"><svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="10"/><path d="m8 12 2.5 2.5L16 9"/></svg> Acknowledged</span>
                     @else
-                        <span class="badge pending">⏳ Pending</span>
+                        <span class="badge pending"><svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Pending</span>
                     @endif
 
                     <div class="lease-actions">
-                        <a href="{{ route('tenant.leases.download', $lease) }}" target="_blank">⬇ Download</a>
+                        <a href="{{ route('tenant.leases.download', $lease) }}" target="_blank"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/></svg> Download</a>
 
                         <form method="POST" action="{{ route('landlord.leases.destroy', $lease) }}"
                               onsubmit="return confirm('Delete this lease?');" style="margin:0;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit">✕ Delete</button>
+                            <button type="submit"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6"/></svg> Delete</button>
                         </form>
                     </div>
                 </div>
