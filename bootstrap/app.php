@@ -15,7 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\EnsureRole::class,
         ]);
 
-        $middleware->redirectUsersTo(fn () => route(auth()->user()?->dashboardRoute() ?? 'login'));
+        $middleware->redirectUsersTo(fn () => route(auth()->user()->dashboardRoute()));
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

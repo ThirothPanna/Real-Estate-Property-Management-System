@@ -23,7 +23,7 @@ use App\Http\Controllers\Tenant\RequestController as TenantRequestController;
 use App\Http\Controllers\Tenant\SettingsController as TenantSettingsController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Tenant\UtilityProviderController;
 Route::get('/', function () {
     if (Auth::check()) {
         /** @var \App\Models\User $user */
@@ -93,6 +93,12 @@ Route::middleware(['auth', 'role:tenant'])
     // Leases
     Route::get('/leases/{lease}/download', [TenantLeaseController::class, 'download'])->name('leases.download');
     Route::post('/leases/{lease}/acknowledge', [TenantLeaseController::class, 'acknowledge'])->name('leases.acknowledge');
+
+    // Utility providers
+    Route::get('/utility-providers', [UtilityProviderController::class, 'index'])->name('utility-providers.index');
+    Route::post('/utility-providers', [UtilityProviderController::class, 'store'])->name('utility-providers.store');
+    Route::patch('/utility-providers/{utilityProvider}', [UtilityProviderController::class, 'update'])->name('utility-providers.update');
+    Route::delete('/utility-providers/{utilityProvider}', [UtilityProviderController::class, 'destroy'])->name('utility-providers.destroy');
 });
 
 /* ================= LANDLORD AREA ================= */
@@ -165,6 +171,8 @@ Route::middleware(['auth', 'role:landlord'])
     Route::post('/notifications/mark-all-read',         [LandlordNotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
     Route::post('/notifications/mark-all-unread',       [LandlordNotificationController::class, 'markAllUnread'])->name('notifications.markAllUnread');
     Route::post('/notifications/delete-all',            [LandlordNotificationController::class, 'destroyAll'])->name('notifications.destroyAll');
+  Route::get('/utilities', [TenantDashboard::class, 'utilities'])->name('utilities');
+
 });
 
 require __DIR__.'/auth.php';

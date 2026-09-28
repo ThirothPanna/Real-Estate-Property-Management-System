@@ -7,7 +7,9 @@ use App\Models\Payment;
 use App\Models\Property;
 use App\Models\Tenancy;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+
 
 class ReportController extends Controller
 {
@@ -104,17 +106,21 @@ class ReportController extends Controller
         $topProperties = array_slice($topProperties, 0, 5);
 
         // ---------- Available years ----------
-        $years = Payment::whereIn('user_id', $tenantIds)
-            ->selectRaw('YEAR(paid_on) as y')
-            ->distinct()
-            ->orderBy('y', 'desc')
-            ->pluck('y')
-            ->filter()
-            ->values();
 
-        if ($years->isEmpty()) {
-            $years = collect([date('Y')]);
-        }
+
+$years = Payment::whereIn('user_id', $tenantIds)
+    ->where('status', 'completed')
+    ->whereNotNull('paid_on')
+    ->selectRaw('YEAR(paid_on) as y')
+    ->distinct()
+    ->orderBy('y', 'desc')
+    ->pluck('y')
+    ->filter()
+    ->values();
+
+if ($years->isEmpty()) {
+    $years = collect([(int) date('Y')]);
+}
 
         return view('landlord.reports.index', compact(
             'totalRevenue', 'occupancyRate', 'avgRent', 'collectionRate',
