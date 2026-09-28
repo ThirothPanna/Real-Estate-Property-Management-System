@@ -24,6 +24,7 @@ use App\Http\Controllers\Tenant\SettingsController as TenantSettingsController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Tenant\UtilityProviderController;
+use App\Http\Controllers\ApplicationController;
 Route::get('/', function () {
     if (Auth::check()) {
         /** @var \App\Models\User $user */
@@ -53,7 +54,7 @@ Route::middleware(['auth', 'role:tenant'])
     Route::get('/rent', [TenantDashboard::class, 'rent'])->name('rent');
     Route::get('/requests', [TenantDashboard::class, 'requests'])->name('requests');
     Route::get('/utilities', [TenantDashboard::class, 'utilities'])->name('utilities');
-    Route::get('/applications', [TenantDashboard::class, 'applications'])->name('applications');
+    // Route::get('/applications', [TenantDashboard::class, 'applications'])->name('applications');
     Route::get('/files', [TenantDashboard::class, 'files'])->name('files');
     Route::get('/downloads', [TenantDashboard::class, 'downloads'])->name('downloads');
 
@@ -99,6 +100,12 @@ Route::middleware(['auth', 'role:tenant'])
     Route::post('/utility-providers', [UtilityProviderController::class, 'store'])->name('utility-providers.store');
     Route::patch('/utility-providers/{utilityProvider}', [UtilityProviderController::class, 'update'])->name('utility-providers.update');
     Route::delete('/utility-providers/{utilityProvider}', [UtilityProviderController::class, 'destroy'])->name('utility-providers.destroy');
+
+    // Application routes for tenants
+    Route::get('/applications', [ApplicationController::class, 'index'])->name('applications');
+    Route::get('/applications/new', [ApplicationController::class, 'create'])->name('applications.create');
+    Route::post('/applications', [ApplicationController::class, 'store'])->name('applications.store');
+    Route::get('/applications/{application}', [ApplicationController::class, 'show'])->name('applications.show');
 });
 
 /* ================= LANDLORD AREA ================= */
@@ -171,7 +178,6 @@ Route::middleware(['auth', 'role:landlord'])
     Route::post('/notifications/mark-all-read',         [LandlordNotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
     Route::post('/notifications/mark-all-unread',       [LandlordNotificationController::class, 'markAllUnread'])->name('notifications.markAllUnread');
     Route::post('/notifications/delete-all',            [LandlordNotificationController::class, 'destroyAll'])->name('notifications.destroyAll');
-  Route::get('/utilities', [TenantDashboard::class, 'utilities'])->name('utilities');
 
 });
 

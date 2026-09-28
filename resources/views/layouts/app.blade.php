@@ -278,7 +278,7 @@
             <a href="{{ route('tenant.utility-providers.index') }}" class="nav-item {{ request()->routeIs('tenant.utility-providers.*') ? 'active' : '' }}">
                 <span class="nav-icon">◫</span><span class="nav-label">Utility Providers</span>
             </a>
-            <a href="{{ route('tenant.applications') }}" class="nav-item {{ request()->routeIs('tenant.applications') ? 'active' : '' }}">
+            <a href="{{ route('tenant.applications') }}" class="nav-item {{ request()->routeIs('tenant.applications*') ? 'active' : '' }}">
                 <span class="nav-icon">▤</span><span class="nav-label">Applications</span>
             </a>
             <a href="{{ route('tenant.files') }}" class="nav-item {{ request()->routeIs('tenant.files') ? 'active' : '' }}">
@@ -473,6 +473,12 @@
     </header>
 
     <div class="content">
+        @isset($header)
+            <div class="mb-6">
+                {{ $header }}
+            </div>
+        @endisset
+        {{ $slot ?? '' }}
         @yield('content')
     </div>
 </div>

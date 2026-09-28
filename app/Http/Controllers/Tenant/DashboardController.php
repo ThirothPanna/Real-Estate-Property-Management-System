@@ -101,16 +101,42 @@ class DashboardController extends Controller
 
     public function files()
     {
-        $documents = LeaseDocument::where('user_id', Auth::id())
+        $userId = Auth::id();
+
+        $documents = LeaseDocument::where('user_id', $userId)
             ->latest()
             ->get();
 
-        return view('tenant.files', compact('documents'));
+        $leases = Lease::where('user_id', $userId)
+            ->latest()
+            ->get();
+
+        $payments = Payment::where('user_id', $userId)
+            ->where('status', 'completed')
+            ->latest('paid_on')
+            ->get();
+
+        return view('tenant.files', compact('documents', 'leases', 'payments'));
     }
 
     public function downloads()
     {
-        return view('tenant.downloads');
+        $userId = Auth::id();
+
+        $payments = Payment::where('user_id', $userId)
+            ->where('status', 'completed')
+            ->latest('paid_on')
+            ->get();
+
+        $leases = Lease::where('user_id', $userId)
+            ->latest()
+            ->get();
+
+        $documents = LeaseDocument::where('user_id', $userId)
+            ->latest()
+            ->get();
+
+        return view('tenant.downloads', compact('payments', 'leases', 'documents'));
     }
 
     public function notifications()
