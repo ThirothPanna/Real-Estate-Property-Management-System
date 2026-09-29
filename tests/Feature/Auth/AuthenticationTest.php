@@ -51,4 +51,15 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
         $response->assertRedirect('/');
     }
+
+    public function test_users_can_add_another_account(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->post(route('account.add'));
+
+        $this->assertGuest();
+        $response->assertRedirect(route('login'));
+        $this->get(route('login'))->assertOk();
+    }
 }

@@ -33,12 +33,24 @@ class AuthenticatedSessionController extends Controller
 
     public function destroy(Request $request): RedirectResponse
     {
+        $this->endSession($request);
+
+        return redirect('/');
+    }
+
+    public function addAccount(Request $request): RedirectResponse
+    {
+        $this->endSession($request);
+
+        return redirect()->route('login');
+    }
+
+    private function endSession(Request $request): void
+    {
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
-
-        return redirect('/');
     }
 }
