@@ -11,9 +11,17 @@ class ReceiptController extends Controller
 {
     public function download(Payment $payment)
     {
-        if ($payment->user_id !== Auth::id()) {
-            abort(403);
-        }
+        return $this->receipt($payment)->download($this->filename($payment));
+    }
+
+    public function view(Payment $payment)
+    {
+        return $this->receipt($payment)->stream($this->filename($payment));
+    }
+
+    private function receipt(Payment $payment)
+    {
+        abort_unless($payment->user_id === Auth::id(), 403);
 
         $user = Auth::user();
 
@@ -24,9 +32,12 @@ class ReceiptController extends Controller
 
         $pdf->setPaper('A4', 'portrait');
 
-        $filename = 'receipt-' . str_pad($payment->id, 6, '0', STR_PAD_LEFT)
-                  . '-' . $payment->paid_on->format('Y-m-d') . '.pdf';
+        return $pdf;
+    }
 
-        return $pdf->download($filename);
+    private function filename(Payment $payment): string
+    {
+        return 'receipt-' . str_pad($payment->id, 6, '0', STR_PAD_LEFT)
+            . '-' . $payment->paid_on->format('Y-m-d') . '.pdf';
     }
 }

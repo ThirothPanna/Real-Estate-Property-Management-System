@@ -8,20 +8,18 @@
         <!-- Session Status -->
         <x-auth-session-status class="mb-4" :status="session('status')" />
 
+        @if ($errors->has('error'))
+            <div role="alert" class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+                {{ $errors->first('error') }}
+            </div>
+        @endif
+
         <!-- Social Login Buttons -->
         <div class="space-y-4 mb-8">
             <!-- Google -->
             <a href="{{ route('social.redirect', 'google') }}" class="w-full flex items-center justify-center gap-3 px-4 py-3.5 border border-gray-200 rounded-lg hover:bg-gray-50 transition duration-200">
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google">
                 <span class="text-gray-700 font-medium text-[15px]">Continue with Google</span>
-            </a>
-
-            <!-- Apple -->
-            <a href="{{ route('social.redirect', 'apple') }}" class="w-full flex items-center justify-center gap-3 px-4 py-3.5 border border-gray-200 rounded-lg hover:bg-gray-50 transition duration-200">
-                <svg class="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.04 2.26-.79 3.56-.7 1.5.11 2.66.63 3.42 1.76-3.17 1.9-2.5 5.75.55 6.96-.71 1.83-1.66 3.54-2.61 4.15zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
-                </svg>
-                <span class="text-gray-700 font-medium text-[15px]">Continue with Apple</span>
             </a>
 
             <!-- Facebook -->

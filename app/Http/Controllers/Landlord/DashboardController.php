@@ -33,8 +33,19 @@ class DashboardController extends Controller
         $expectedMonthly   = $activeTenancies->sum('rent_amount');
         $tenantIds         = $activeTenancies->pluck('user_id')->unique();
 
+        $allTenantIds = Tenancy::where('landlord_id', $landlordId)
+            ->pluck('user_id')
+            ->unique();
+        $recentPayments = Payment::with('user')
+            ->whereIn('user_id', $allTenantIds)
+            ->latest('paid_on')
+            ->latest('id')
+            ->take(8)
+            ->get();
+
         // ---------- Payments (this month) ----------
         $thisMonthCollected = Payment::whereIn('user_id', $tenantIds)
+            ->where('status', 'completed')
             ->whereMonth('paid_on', now()->month)
             ->whereYear('paid_on', now()->year)
             ->sum('amount');
@@ -70,6 +81,7 @@ class DashboardController extends Controller
             $labels[] = $date->format('M d');
 
             $income = Payment::whereIn('user_id', $tenantIds)
+                ->where('status', 'completed')
                 ->whereDate('paid_on', $date)
                 ->sum('amount');
 
@@ -90,6 +102,7 @@ class DashboardController extends Controller
             $monthLabels[] = $month->format('M');
 
             $total = Payment::whereIn('user_id', $tenantIds)
+                ->where('status', 'completed')
                 ->whereMonth('paid_on', $month->month)
                 ->whereYear('paid_on', $month->year)
                 ->sum('amount');
@@ -106,6 +119,7 @@ class DashboardController extends Controller
         return view('landlord.dashboard', compact(
             'totalProps', 'available', 'occupied',
             'activeTenantCount', 'expectedMonthly', 'thisMonthCollected', 'collectionRate',
+            'recentPayments',
             'pendingRequests', 'totalRequests', 'resolvedRequests', 'resolvedRate',
             'occupancyRate',
             'labels', 'incomeSeries', 'requestsSeries',

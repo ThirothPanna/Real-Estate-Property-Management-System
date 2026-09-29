@@ -360,11 +360,8 @@
                                 </span>
                             </td>
                             <td style="text-align:right;">
-                                @if (Route::has('tenant.receipts.download'))
-                                    <a href="{{ route('tenant.receipts.download', $p) }}" class="btn-receipt">⬇ PDF</a>
-                                @else
-                                    <span style="color:#9ca3af; font-size:12px;">—</span>
-                                @endif
+                                <a href="{{ route('landlord.payments.receipt.view', $p) }}" class="btn-receipt">View PDF</a>
+                                <a href="{{ route('landlord.payments.receipt.download', $p) }}" class="btn-receipt">Download</a>
                             </td>
                         </tr>
                     @endforeach

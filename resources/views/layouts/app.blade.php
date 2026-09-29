@@ -264,6 +264,9 @@
             <a href="{{ route('landlord.leases.index') }}" class="nav-item {{ request()->routeIs('landlord.leases.*') ? 'active' : '' }}">
                 <span class="nav-icon">▣</span><span class="nav-label">Leases</span>
             </a>
+            <a href="{{ route('landlord.utility-requests.index') }}" class="nav-item {{ request()->routeIs('landlord.utility-requests.*') ? 'active' : '' }}">
+                <span class="nav-icon">◫</span><span class="nav-label">Utility Requests</span>
+            </a>
         @else
             {{-- ========== TENANT SIDEBAR ========== --}}
             <a href="{{ route('tenant.dashboard') }}" class="nav-item {{ request()->routeIs('tenant.dashboard') ? 'active' : '' }}">
@@ -272,11 +275,17 @@
             <a href="{{ route('tenant.rent') }}" class="nav-item {{ request()->routeIs('tenant.rent') ? 'active' : '' }}">
                 <span class="nav-icon">$</span><span class="nav-label">Rent</span>
             </a>
+            <a href="{{ route('tenant.properties.index') }}" class="nav-item {{ request()->routeIs('tenant.properties.*') ? 'active' : '' }}">
+                <span class="nav-icon">⌂</span><span class="nav-label">Find a Home</span>
+            </a>
             <a href="{{ route('tenant.requests') }}" class="nav-item {{ request()->routeIs('tenant.requests') ? 'active' : '' }}">
                 <span class="nav-icon">✂</span><span class="nav-label">Requests</span>
             </a>
             <a href="{{ route('tenant.utility-providers.index') }}" class="nav-item {{ request()->routeIs('tenant.utility-providers.*') ? 'active' : '' }}">
                 <span class="nav-icon">◫</span><span class="nav-label">Utility Providers</span>
+            </a>
+            <a href="{{ route('tenant.utility-requests.index') }}" class="nav-item {{ request()->routeIs('tenant.utility-requests.*') ? 'active' : '' }}">
+                <span class="nav-icon">↗</span><span class="nav-label">Utility Requests</span>
             </a>
             <a href="{{ route('tenant.applications') }}" class="nav-item {{ request()->routeIs('tenant.applications*') ? 'active' : '' }}">
                 <span class="nav-icon">▤</span><span class="nav-label">Applications</span>

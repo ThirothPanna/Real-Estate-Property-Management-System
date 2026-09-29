@@ -234,7 +234,7 @@
                     <div class="lease-icon"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg></div>
 
                     <div class="lease-info">
-                        <div class="lease-title">{{ $lease->title }}</div>
+                        <a class="lease-title" href="{{ route('landlord.leases.view', $lease) }}">{{ $lease->title }}</a>
                         <div class="lease-meta">
                             <strong>{{ $lease->tenant->name }}</strong>
                             @if ($lease->tenancy && $lease->tenancy->property)
@@ -251,7 +251,8 @@
                     @endif
 
                     <div class="lease-actions">
-                        <a href="{{ route('tenant.leases.download', $lease) }}" target="_blank"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/></svg> Download</a>
+                        <a href="{{ route('landlord.leases.view', $lease) }}">View</a>
+                        <a href="{{ route('landlord.leases.download', $lease) }}"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/></svg> Download</a>
 
                         <form method="POST" action="{{ route('landlord.leases.destroy', $lease) }}"
                               onsubmit="return confirm('Delete this lease?');" style="margin:0;">

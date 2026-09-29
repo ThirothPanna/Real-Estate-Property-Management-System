@@ -6,12 +6,23 @@ use App\Http\Controllers\Controller;
 use App\Models\Payment;
 use App\Models\Property;
 use App\Models\Tenancy;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PaymentController extends Controller
 {
+    public function viewReceipt(Payment $payment)
+    {
+        return $this->receipt($payment)->stream($this->receiptFilename($payment));
+    }
+
+    public function downloadReceipt(Payment $payment)
+    {
+        return $this->receipt($payment)->download($this->receiptFilename($payment));
+    }
+
     public function index(Request $request)
     {
         $landlordId = Auth::id();
@@ -96,5 +107,28 @@ class PaymentController extends Controller
             'payments', 'counts', 'totals', 'tab', 'period', 'search',
             'properties', 'propertyId', 'tenantPropertyMap'
         ));
+    }
+
+    private function receipt(Payment $payment)
+    {
+        abort_unless(
+            Tenancy::where('landlord_id', Auth::id())
+                ->where('user_id', $payment->user_id)
+                ->exists(),
+            403
+        );
+
+        $payment->loadMissing('user');
+
+        return Pdf::loadView('tenant.receipt', [
+            'payment' => $payment,
+            'user' => $payment->user,
+        ])->setPaper('A4', 'portrait');
+    }
+
+    private function receiptFilename(Payment $payment): string
+    {
+        return 'receipt-' . str_pad($payment->id, 6, '0', STR_PAD_LEFT)
+            . '-' . $payment->paid_on->format('Y-m-d') . '.pdf';
     }
 }

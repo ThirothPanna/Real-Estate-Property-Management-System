@@ -52,6 +52,34 @@ class NotificationController extends Controller
         ));
     }
 
+    public function show(Notification $notification)
+    {
+        $this->checkOwnership($notification);
+
+        if ($notification->isUnread()) {
+            $notification->update(['read_at' => now()]);
+        }
+
+        $actionUrl = match ($notification->icon) {
+            'payment' => route('landlord.payments.index'),
+            'request' => route('landlord.requests.index'),
+            'lease' => route('landlord.leases.index'),
+            default => null,
+        };
+
+        return view('notifications.show', [
+            'notification' => $notification->fresh(),
+            'listUrl' => route('landlord.notifications'),
+            'actionUrl' => $actionUrl,
+            'actionLabel' => match ($notification->icon) {
+                'payment' => 'View payments',
+                'request' => 'View maintenance requests',
+                'lease' => 'View leases',
+                default => null,
+            },
+        ]);
+    }
+
     public function markRead(Notification $notification)
     {
         $this->checkOwnership($notification);

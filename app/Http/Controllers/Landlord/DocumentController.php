@@ -10,6 +10,7 @@ use App\Models\Tenancy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Services\StoredDocumentPreview;
 
 class DocumentController extends Controller
 {
@@ -94,5 +95,33 @@ class DocumentController extends Controller
         $document->delete();
 
         return back()->with('status', 'Document deleted.');
+    }
+
+    public function view(Document $document, StoredDocumentPreview $preview)
+    {
+        if ($document->landlord_id !== Auth::id()) {
+            abort(403);
+        }
+
+        return $preview->response(
+            $document->file_path,
+            $document->original_name,
+            $document->mime_type,
+            route('landlord.documents.download', $document)
+        );
+    }
+
+    public function download(Document $document)
+    {
+        if ($document->landlord_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $storage = Storage::disk('public');
+        if (! $storage->exists($document->file_path)) {
+            abort(404);
+        }
+
+        return $storage->download($document->file_path, $document->original_name);
     }
 }

@@ -16,6 +16,7 @@
         .download-meta { color:#6b7280; font-size:12px; margin-top:4px; }
         .download-link { display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; padding:8px 12px; border:1px solid #e5e7eb; border-radius:8px; color:#374151; background:#fff; text-decoration:none; font-size:13px; font-weight:600; }
         .download-link:hover { color:#16a34a; background:#f0fdf4; border-color:#bbf7d0; }
+        .download-actions { display:flex; gap:8px; flex-shrink:0; }
         .download-empty { color:#6b7280; text-align:center; padding:20px 10px; font-size:14px; }
         @media (max-width:600px) { .download-row { align-items:flex-start; flex-direction:column; } }
     </style>
@@ -31,10 +32,13 @@
             @forelse ($payments as $payment)
                 <div class="download-row">
                     <div class="download-info">
-                        <span class="download-name">Receipt #{{ str_pad($payment->id, 6, '0', STR_PAD_LEFT) }} — {{ $payment->category }}</span>
+                        <a class="download-name" href="{{ route('tenant.receipts.view', $payment) }}">Receipt #{{ str_pad($payment->id, 6, '0', STR_PAD_LEFT) }} — {{ $payment->category }}</a>
                         <div class="download-meta">${{ number_format((float) $payment->amount, 2) }} | Paid {{ $payment->paid_on->format('M d, Y') }}</div>
                     </div>
-                    <a class="download-link" href="{{ route('tenant.receipts.download', $payment) }}">Download PDF</a>
+                    <div class="download-actions">
+                        <a class="download-link" href="{{ route('tenant.receipts.view', $payment) }}">View PDF</a>
+                        <a class="download-link" href="{{ route('tenant.receipts.download', $payment) }}">Download</a>
+                    </div>
                 </div>
             @empty
                 <p class="download-empty">No completed payments are available for download.</p>
@@ -48,10 +52,13 @@
             @forelse ($leases as $lease)
                 <div class="download-row">
                     <div class="download-info">
-                        <span class="download-name">{{ $lease->title }}</span>
+                        <a class="download-name" href="{{ route('tenant.leases.view', $lease) }}">{{ $lease->title }}</a>
                         <div class="download-meta">{{ $lease->original_name }} | {{ $lease->readable_size }} | Added {{ $lease->created_at->format('M d, Y') }}</div>
                     </div>
-                    <a class="download-link" href="{{ route('tenant.leases.download', $lease) }}">Download lease</a>
+                    <div class="download-actions">
+                        <a class="download-link" href="{{ route('tenant.leases.view', $lease) }}">View</a>
+                        <a class="download-link" href="{{ route('tenant.leases.download', $lease) }}">Download</a>
+                    </div>
                 </div>
             @empty
                 <p class="download-empty">No lease agreements are available for download.</p>
@@ -65,10 +72,13 @@
             @forelse ($documents as $document)
                 <div class="download-row">
                     <div class="download-info">
-                        <span class="download-name">{{ $document->original_name }}</span>
+                        <a class="download-name" href="{{ route('tenant.documents.view', $document) }}">{{ $document->original_name }}</a>
                         <div class="download-meta">{{ $document->readable_size }} | Uploaded {{ $document->created_at->format('M d, Y') }}</div>
                     </div>
-                    <a class="download-link" href="{{ route('tenant.documents.download', $document) }}">Download file</a>
+                    <div class="download-actions">
+                        <a class="download-link" href="{{ route('tenant.documents.view', $document) }}">View</a>
+                        <a class="download-link" href="{{ route('tenant.documents.download', $document) }}">Download</a>
+                    </div>
                 </div>
             @empty
                 <p class="download-empty">You haven't uploaded any documents yet.</p>

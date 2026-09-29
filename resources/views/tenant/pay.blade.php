@@ -397,56 +397,40 @@
 
 <div class="pay-wrap">
     <div class="progress-labels">
-        <div class="active">
-            <span class="num">1.</span> Select Payment Options
-        </div>
+        <div class="active"><span class="num">1.</span> Select Payment Options</div>
         <div class="active"><span class="num">2.</span> Review &amp; Pay</div>
     </div>
     <div class="progress-bars">
-        <div class="bar active"></div>
-        <div class="bar active"></div>
+        <div class="bar active"></div><div class="bar active"></div>
     </div>
 
     <h2 class="pay-h2">Review &amp; Pay</h2>
     <p class="pay-sub">Please review payment details.</p>
 
-    <form
-        method="POST"
-        action="{{ route('tenant.payments.store') }}"
-        id="payForm"
-        autocomplete="off"
-        novalidate
-    >
+    @if ($errors->any())
+        <div role="alert" style="margin-bottom:20px;padding:12px 16px;border:1px solid #fecaca;border-radius:8px;background:#fef2f2;color:#b91c1c;font-size:14px;">
+            {{ $errors->first() }}
+        </div>
+    @endif
+
+    <form method="POST" action="{{ route('tenant.payments.store') }}" id="payForm" autocomplete="off" novalidate>
         @csrf
-        <input type="hidden" name="method" value="card" />
+        <input type="hidden" name="method" value="card">
 
         <div class="pay-section">
             <h3>Billing Details</h3>
             <div class="pay-box">
                 <div class="grid-2">
                     <div>
-                        <label class="card-label">Amount (USD)</label>
-                        <input
-                            type="number"
-                            name="amount"
-                            step="0.01"
-                            min="1"
-                            value="{{ old('amount', '15.00') }}"
-                            placeholder="0.00"
-                            class="card-input"
-                            id="fieldAmount"
-                        />
+                        <label class="card-label" for="fieldAmount">Amount (USD)</label>
+                        <input type="number" name="amount" step="0.01" min="1" max="100000"
+                               value="{{ old('amount', $defaultAmount > 0 ? number_format($defaultAmount, 2, '.', '') : '15.00') }}"
+                               placeholder="0.00" class="card-input" id="fieldAmount">
                         <span class="field-error" id="errAmount"></span>
                     </div>
                     <div>
-                        <label class="card-label">Payment Date</label>
-                        <input
-                            type="date"
-                            name="paid_on"
-                            value="{{ old('paid_on', date('Y-m-d')) }}"
-                            class="card-input"
-                            id="fieldPaidOn"
-                        />
+                        <label class="card-label" for="fieldPaidOn">Payment Date</label>
+                        <input type="date" name="paid_on" value="{{ old('paid_on', date('Y-m-d')) }}" class="card-input" id="fieldPaidOn">
                         <span class="field-error" id="errPaidOn"></span>
                     </div>
                 </div>
@@ -456,339 +440,155 @@
         <div class="pay-section">
             <h3>Card Details</h3>
             <div class="pay-box">
-                <div style="margin-bottom: 20px">
-                    <label class="card-label">Card Number</label>
-                    <div style="position: relative">
-                        <input
-                            type="text"
-                            name="card_number"
-                            id="cardNumber"
-                            inputmode="numeric"
-                            maxlength="19"
-                            placeholder="1234 5678 9012 3456"
-                            value="{{ old('card_number') }}"
-                            class="card-input"
-                            style="padding-right: 56px"
-                        />
-                        <div
-                            style="
-                                position: absolute;
-                                right: 14px;
-                                top: 50%;
-                                transform: translateY(-50%);
-                            "
-                        >
-                            <span class="mc"
-                                ><span class="red"></span
-                                ><span class="yellow"></span
-                            ></span>
-                        </div>
-                    </div>
+                <div style="margin-bottom:20px">
+                    <label class="card-label" for="cardNumber">Card Number</label>
+                    <input type="text" name="card_number" id="cardNumber" inputmode="numeric" maxlength="19"
+                           placeholder="1234 5678 9012 3456" value="{{ old('card_number') }}" class="card-input">
                     <span class="field-error" id="errCardNumber"></span>
                 </div>
-
-                <div class="grid-2" style="margin-bottom: 20px">
+                <div class="grid-2" style="margin-bottom:20px">
                     <div>
-                        <label class="card-label">Expires On</label>
-                        <input
-                            type="text"
-                            name="card_expiry"
-                            id="cardExpiry"
-                            inputmode="numeric"
-                            maxlength="5"
-                            placeholder="MM/YY"
-                            value="{{ old('card_expiry') }}"
-                            class="card-input"
-                        />
+                        <label class="card-label" for="cardExpiry">Expires On</label>
+                        <input type="text" name="card_expiry" id="cardExpiry" inputmode="numeric" maxlength="5"
+                               placeholder="MM/YY" value="{{ old('card_expiry') }}" class="card-input">
                         <span class="field-error" id="errCardExpiry"></span>
                     </div>
                     <div>
-                        <label class="card-label">CVC/CVV</label>
-                        <input
-                            type="text"
-                            name="card_cvc"
-                            id="cardCvc"
-                            inputmode="numeric"
-                            maxlength="4"
-                            placeholder="123"
-                            value="{{ old('card_cvc') }}"
-                            class="card-input"
-                        />
+                        <label class="card-label" for="cardCvc">CVC/CVV</label>
+                        <input type="text" name="card_cvc" id="cardCvc" inputmode="numeric" maxlength="4"
+                               placeholder="123" value="{{ old('card_cvc') }}" class="card-input">
                         <span class="field-error" id="errCardCvc"></span>
                     </div>
                 </div>
-
                 <div>
-                    <label class="card-label">Name on Card</label>
-                    <input
-                        type="text"
-                        name="card_name"
-                        id="cardName"
-                        placeholder="Full name as shown on card"
-                        value="{{ old('card_name', auth()->user()->name) }}"
-                        class="card-input"
-                    />
+                    <label class="card-label" for="cardName">Name on Card</label>
+                    <input type="text" name="card_name" id="cardName" placeholder="Full name as shown on card"
+                           value="{{ old('card_name', auth()->user()->name) }}" class="card-input">
                     <span class="field-error" id="errCardName"></span>
                 </div>
             </div>
         </div>
 
         <label class="terms" id="termsLabel">
-            <input type="checkbox" id="fieldTerms" />
-            <span>
-                I agree to the <a href="#">Terms and Conditions</a>. The amount
-                of any autopay will be your total outstanding account balance at
-                the time the invoice(s) is (are) due, which will include
-                tuition, fees and other charges. As a result, the amount and
-                frequency of your autopay may vary.
-            </span>
+            <input type="checkbox" id="fieldTerms">
+            <span>I agree to the <a href="#">Terms and Conditions</a>. This is a demonstration form and does not charge a card.</span>
         </label>
-        <span
-            class="field-error"
-            id="errTerms"
-            style="margin-top: -14px; display: block"
-        ></span>
+        <span class="field-error" id="errTerms" style="margin-top:-14px;display:block"></span>
 
-        <p class="pay-note">
-            Click on the 'Pay' to make a payment and wait until it completes. Do
-            not refresh your browser or use the browser's 'Back' button, or
-            duplicate payments could result.
-        </p>
+        <p class="pay-note">Use demonstration details only. Do not enter a real card number or security code. This form records a payment in the app but does not process a charge.</p>
 
         <div class="pay-actions">
             <a href="{{ route('tenant.dashboard') }}" class="btn-back">Back</a>
-            <button type="submit" class="btn-pay" id="payBtn">
-                Pay <span id="payAmountLabel">$15.00</span>
-            </button>
+            <button type="submit" class="btn-pay" id="payBtn">Pay <span id="payAmountLabel">$15.00</span></button>
         </div>
     </form>
 </div>
 
-{{-- ============ REVIEW OVERLAY ============ --}}
-<div class="review-overlay" id="reviewOverlay">
-    <div class="review-card">
-        <div class="review-title">Confirm Your Payment</div>
-        <div class="review-sub">
-            Please review the details before confirming.
-        </div>
-
-        <div class="review-row">
-            <span class="k">Amount</span
-            ><span class="v" id="reviewAmount">$0.00</span>
-        </div>
-        <div class="review-row">
-            <span class="k">Payment Date</span
-            ><span class="v" id="reviewDate">—</span>
-        </div>
-        <div class="review-row">
-            <span class="k">Card</span
-            ><span class="v" id="reviewCard">•••• ————</span>
-        </div>
-        <div class="review-row">
-            <span class="k">Name on Card</span
-            ><span class="v" id="reviewName">—</span>
-        </div>
-
-        <div class="review-actions">
-            <button type="button" class="btn-cancel" onclick="closeReview()">
-                Cancel
-            </button>
-            <button
-                type="button"
-                class="btn-confirm"
-                onclick="confirmPayment()"
-            >
-                Confirm Payment
-            </button>
-        </div>
-    </div>
-</div>
-
-{{-- ============ SUCCESS OVERLAY ============ --}}
-<div class="success-overlay" id="successOverlay">
-    <div class="success-card">
-        <div class="success-ring">
-            <svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" /></svg>
-        </div>
-        <div class="success-title">Payment Successful</div>
-        <div class="success-text">Your rent payment has been recorded.</div>
-        <button
-            type="button"
-            class="success-btn"
-            onclick="window.location='{{ route('tenant.dashboard') }}'"
-        >
-            Back to Dashboard
-        </button>
-    </div>
-</div>
-
 <script>
-    function setError(inputId, errId, message) {
-        var input = document.getElementById(inputId);
-        var err = document.getElementById(errId);
-        if (message) {
-            input.classList.add("is-error");
-            err.textContent = message;
-        } else {
-            input.classList.remove("is-error");
-            err.textContent = "";
-        }
+    function setError(inputId, errorId, message) {
+        document.getElementById(inputId).classList.toggle('is-error', Boolean(message));
+        document.getElementById(errorId).textContent = message;
     }
 
-    var cardNumber = document.getElementById("cardNumber");
-    cardNumber.addEventListener("input", function () {
-        var digits = this.value.replace(/\D/g, "").slice(0, 16);
-        this.value = digits.replace(/(.{4})/g, "$1 ").trim();
-        setError("cardNumber", "errCardNumber", "");
+    var cardNumber = document.getElementById('cardNumber');
+    cardNumber.addEventListener('input', function () {
+        var digits = this.value.replace(/\D/g, '').slice(0, 16);
+        this.value = digits.replace(/(.{4})/g, '$1 ').trim();
+        setError('cardNumber', 'errCardNumber', '');
     });
 
-    var cardExpiry = document.getElementById("cardExpiry");
-    cardExpiry.addEventListener("input", function () {
-        var digits = this.value.replace(/\D/g, "").slice(0, 4);
-        this.value =
-            digits.length >= 3
-                ? digits.slice(0, 2) + "/" + digits.slice(2)
-                : digits;
-        setError("cardExpiry", "errCardExpiry", "");
+    document.getElementById('cardExpiry').addEventListener('input', function () {
+        var digits = this.value.replace(/\D/g, '').slice(0, 4);
+        this.value = digits.length >= 3 ? digits.slice(0, 2) + '/' + digits.slice(2) : digits;
+        setError('cardExpiry', 'errCardExpiry', '');
     });
 
-    var cardCvc = document.getElementById("cardCvc");
-    cardCvc.addEventListener("input", function () {
-        this.value = this.value.replace(/\D/g, "").slice(0, 4);
-        setError("cardCvc", "errCardCvc", "");
+    document.getElementById('cardCvc').addEventListener('input', function () {
+        this.value = this.value.replace(/\D/g, '').slice(0, 4);
+        setError('cardCvc', 'errCardCvc', '');
     });
 
-    document.getElementById("cardName").addEventListener("input", function () {
-        setError("cardName", "errCardName", "");
-    });
-
-    var amountInput = document.getElementById("fieldAmount");
-    var amountLabel = document.getElementById("payAmountLabel");
+    var amountInput = document.getElementById('fieldAmount');
+    var amountLabel = document.getElementById('payAmountLabel');
     function updateAmountLabel() {
-        var v = parseFloat(amountInput.value);
-        amountLabel.textContent = "$" + (isNaN(v) ? "0.00" : v.toFixed(2));
+        var amount = parseFloat(amountInput.value);
+        amountLabel.textContent = '$' + (isNaN(amount) ? '0.00' : amount.toFixed(2));
     }
-    amountInput.addEventListener("input", function () {
-        updateAmountLabel();
-        setError("fieldAmount", "errAmount", "");
-    });
+    amountInput.addEventListener('input', updateAmountLabel);
     updateAmountLabel();
 
-    document
-        .getElementById("fieldPaidOn")
-        .addEventListener("input", function () {
-            setError("fieldPaidOn", "errPaidOn", "");
-        });
-
-    document
-        .getElementById("fieldTerms")
-        .addEventListener("change", function () {
-            document.getElementById("errTerms").textContent = "";
-            document.getElementById("termsLabel").classList.remove("is-error");
-        });
-
-    document.getElementById("payForm").addEventListener("submit", function (e) {
-        e.preventDefault();
-        var form = this;
-
-        var amount = form.querySelector('input[name="amount"]').value.trim();
-        var paidOn = form.querySelector('input[name="paid_on"]').value.trim();
-        var cardNum = document.getElementById("cardNumber").value.trim();
-        var cardExp = document.getElementById("cardExpiry").value.trim();
-        var cardCvc = document.getElementById("cardCvc").value.trim();
-        var cardName = document.getElementById("cardName").value.trim();
-        var terms = document.getElementById("fieldTerms").checked;
+    document.getElementById('payForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        var amount = amountInput.value.trim();
+        var paidOn = document.getElementById('fieldPaidOn').value.trim();
+        var cardDigits = cardNumber.value.replace(/\D/g, '');
+        var expiry = document.getElementById('cardExpiry').value.trim();
+        var cvc = document.getElementById('cardCvc').value.trim();
+        var cardName = document.getElementById('cardName').value.trim();
+        var firstError = null;
         var hasError = false;
-        var firstErrorField = null;
 
-        setError("fieldAmount", "errAmount", "");
-        setError("fieldPaidOn", "errPaidOn", "");
-        setError("cardNumber", "errCardNumber", "");
-        setError("cardExpiry", "errCardExpiry", "");
-        setError("cardCvc", "errCardCvc", "");
-        setError("cardName", "errCardName", "");
-        document.getElementById("errTerms").textContent = "";
-
-        if (!amount || parseFloat(amount) < 1) {
-            setError(
-                "fieldAmount",
-                "errAmount",
-                "Please enter a valid amount.",
-            );
-            hasError = true;
-            firstErrorField = firstErrorField || "fieldAmount";
-        }
-        if (!paidOn) {
-            setError(
-                "fieldPaidOn",
-                "errPaidOn",
-                "Please choose a payment date.",
-            );
-            hasError = true;
-            firstErrorField = firstErrorField || "fieldPaidOn";
+        function validate(inputId, errorId, message) {
+            setError(inputId, errorId, message);
+            if (message) {
+                hasError = true;
+                firstError = firstError || inputId;
+            }
         }
 
-        var digitsOnly = cardNum.replace(/\D/g, "");
-        if (digitsOnly.length < 13) {
-            setError(
-                "cardNumber",
-                "errCardNumber",
-                "Enter a valid card number (13–16 digits).",
-            );
-            hasError = true;
-            firstErrorField = firstErrorField || "cardNumber";
-        }
-        if (!/^\d{2}\/\d{2}$/.test(cardExp)) {
-            setError("cardExpiry", "errCardExpiry", "Use MM/YY format.");
-            hasError = true;
-            firstErrorField = firstErrorField || "cardExpiry";
-        }
-        if (cardCvc.length < 3) {
-            setError("cardCvc", "errCardCvc", "At least 3 digits.");
-            hasError = true;
-            firstErrorField = firstErrorField || "cardCvc";
-        }
-        if (!cardName) {
-            setError("cardName", "errCardName", "Enter the name on the card.");
-            hasError = true;
-            firstErrorField = firstErrorField || "cardName";
-        }
+        validate('fieldAmount', 'errAmount', !amount || parseFloat(amount) < 1 ? 'Please enter a valid amount.' : '');
+        validate('fieldPaidOn', 'errPaidOn', !paidOn ? 'Please choose a payment date.' : '');
+        validate('cardNumber', 'errCardNumber', cardDigits.length < 13 ? 'Enter a valid card number (13–16 digits).' : '');
+        validate('cardExpiry', 'errCardExpiry', !/^\d{2}\/\d{2}$/.test(expiry) ? 'Use MM/YY format.' : '');
+        validate('cardCvc', 'errCardCvc', cvc.length < 3 ? 'At least 3 digits.' : '');
+        validate('cardName', 'errCardName', !cardName ? 'Enter the name on the card.' : '');
 
-        if (!terms) {
-            document.getElementById("errTerms").textContent =
-                "Please agree to the Terms and Conditions.";
-            document.getElementById("termsLabel").classList.add("is-error");
+        var termsAccepted = document.getElementById('fieldTerms').checked;
+        document.getElementById('errTerms').textContent = termsAccepted ? '' : 'Please agree to the Terms and Conditions.';
+        document.getElementById('termsLabel').classList.toggle('is-error', !termsAccepted);
+        if (!termsAccepted) {
             hasError = true;
-            firstErrorField = firstErrorField || "fieldTerms";
+            firstError = firstError || 'fieldTerms';
         }
 
         if (hasError) {
-            if (firstErrorField)
-                document.getElementById(firstErrorField).focus();
+            document.getElementById(firstError).focus();
             return;
         }
 
-        document.getElementById("reviewAmount").textContent =
-            "$" + parseFloat(amount).toFixed(2);
-        document.getElementById("reviewDate").textContent = paidOn;
-        document.getElementById("reviewCard").textContent =
-            "•••• " + digitsOnly.slice(-4);
-        document.getElementById("reviewName").textContent = cardName;
-
-        document.getElementById("reviewOverlay").classList.add("show");
+        document.getElementById('reviewAmount').textContent = '$' + parseFloat(amount).toFixed(2);
+        document.getElementById('reviewDate').textContent = paidOn;
+        document.getElementById('reviewCard').textContent = '•••• ' + cardDigits.slice(-4);
+        document.getElementById('reviewName').textContent = cardName;
+        document.getElementById('reviewOverlay').classList.add('show');
     });
 
     function closeReview() {
-        document.getElementById("reviewOverlay").classList.remove("show");
+        document.getElementById('reviewOverlay').classList.remove('show');
     }
 
     function confirmPayment() {
-        document.getElementById("reviewOverlay").classList.remove("show");
-        document.getElementById("successOverlay").classList.add("show");
-        setTimeout(function () {
-            document.getElementById("payForm").submit();
-        }, 2200);
+        closeReview();
+        var button = document.getElementById('payBtn');
+        button.disabled = true;
+        button.textContent = 'Recording payment...';
+        document.getElementById('payForm').submit();
     }
 </script>
+
+<div class="review-overlay" id="reviewOverlay">
+    <div class="review-card">
+        <div class="review-title">Confirm Your Payment</div>
+        <div class="review-sub">Please review the details before confirming.</div>
+        <div class="review-row"><span class="k">Amount</span><span class="v" id="reviewAmount">$0.00</span></div>
+        <div class="review-row"><span class="k">Payment Date</span><span class="v" id="reviewDate">-</span></div>
+        <div class="review-row"><span class="k">Card</span><span class="v" id="reviewCard">-</span></div>
+        <div class="review-row"><span class="k">Name on Card</span><span class="v" id="reviewName">-</span></div>
+        <div class="review-actions">
+            <button type="button" class="btn-cancel" onclick="closeReview()">Cancel</button>
+            <button type="button" class="btn-confirm" onclick="confirmPayment()">Confirm Payment</button>
+        </div>
+    </div>
+</div>
 
 @endsection

@@ -101,8 +101,8 @@
         </div>
         <div class="stat">
             <div class="label">Total Paid</div>
-            <div class="value">${{ number_format($payments->sum('amount'), 2) }}</div>
-            <div class="trend">{{ $payments->count() }} payments</div>
+            <div class="value">${{ number_format($completedPayments->sum('amount'), 2) }}</div>
+            <div class="trend">{{ $completedPayments->count() }} payments</div>
         </div>
     </div>
 
@@ -110,7 +110,7 @@
         <a href="{{ route('tenant.pay') }}" class="btn btn-primary"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg> Pay Rent</a>
         <button class="btn btn-outline" onclick="openRequestModal()"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-7.3 7.3a2.1 2.1 0 0 1-3-3l7.3-7.3a6 6 0 0 1 7.9-7.9z"/></svg> Submit Request</button>
         <a href="{{ route('tenant.files') }}" class="btn btn-outline"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg> View Lease</a>
-        <button class="btn btn-outline"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg> Report Payment</button>
+        <a href="#rent-reporting" class="btn btn-outline"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg> Rent Reporting</a>
     </div>
 
     {{-- ============ LEASE PANEL (with shared leases) ============ --}}
@@ -126,7 +126,7 @@
                         <div style="width:44px; height:44px; border-radius:10px; background:#fee2e2; color:#dc2626; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg></div>
 
                         <div style="flex:1; min-width:180px;">
-                            <div style="font-size:15px; font-weight:700; color:#111827;">{{ $lease->title }}</div>
+                            <a href="{{ route('tenant.leases.view', $lease) }}" style="font-size:15px; font-weight:700; color:#111827; text-decoration:none;">{{ $lease->title }}</a>
                             <div style="font-size:12px; color:#6b7280; margin-top:2px;">
                                 Shared {{ $lease->created_at->diffForHumans() }}
                                 @if ($lease->isAcknowledged())
@@ -141,10 +141,11 @@
                         </div>
 
                         <div style="display:flex; gap:8px; flex-shrink:0;">
-                            <a href="{{ route('tenant.leases.download', $lease) }}"
+                            <a href="{{ route('tenant.leases.view', $lease) }}"
                                style="padding:8px 14px; border-radius:8px; border:1px solid #e5e7eb; background:#fff; color:#374151; text-decoration:none; font-size:13px; font-weight:600;">
-                                <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/></svg> Download
+                                View lease
                             </a>
+                            <a href="{{ route('tenant.leases.download', $lease) }}" style="font-size:13px; font-weight:600; color:#4b5563;">Download</a>
 
                             @if (!$lease->isAcknowledged())
                                 <form method="POST" action="{{ route('tenant.leases.acknowledge', $lease) }}" style="margin:0;">
@@ -164,7 +165,10 @@
 
     {{-- ============ RECENT TRANSACTIONS ============ --}}
     <div class="panel">
-        <h3>Recent Transactions</h3>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px;">
+            <h3 style="margin:0;">Recent Transactions</h3>
+            <a href="{{ route('tenant.rent') }}" style="display:inline-flex;align-items:center;padding:8px 12px;border:1px solid #d1d5db;border-radius:7px;color:#374151;font-size:13px;font-weight:600;text-decoration:none;">View all transactions</a>
+        </div>
         <table>
             <thead>
                 <tr><th>Status</th><th>Date</th><th>Category</th><th>Amount</th><th>Method</th></tr>
@@ -224,12 +228,19 @@
     </div>
 
     {{-- ============ RENT REPORTING CTA ============ --}}
-    <div class="panel" style="display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;">
+    <div class="panel" id="rent-reporting" style="display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;">
         <div>
             <h3 style="margin-bottom:6px;">Rent Reporting &amp; Credit Boost</h3>
-            <p style="color:#6b7280; font-size:14px;">Report rent payments you're already making to major credit bureaus.</p>
+            <p style="color:#6b7280; font-size:14px;">Register your interest in rent reporting. This does not enroll you with a bureau or send payment data.</p>
         </div>
-        <button class="btn btn-primary">Enroll</button>
+        @if ($rentReportingRegistered)
+            <span role="status" style="color:#166534; font-size:14px; font-weight:600;">Interest registered</span>
+        @else
+            <form method="POST" action="{{ route('tenant.rent-reporting.store') }}">
+                @csrf
+                <button class="btn btn-primary" type="submit">Register interest</button>
+            </form>
+        @endif
     </div>
 
     {{-- ============ LEASE DOCUMENTS ============ --}}
@@ -273,18 +284,16 @@
                         </div>
 
                         <div style="flex:1; min-width:0;">
-                            <div style="font-size:14px; font-weight:600; color:#111827; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-                                {{ $doc->original_name }}
-                            </div>
+                            <a href="{{ route('tenant.documents.view', $doc) }}" style="display:block; font-size:14px; font-weight:600; color:#111827; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ $doc->original_name }}</a>
                             <div style="font-size:12px; color:#6b7280; margin-top:2px;">
                                 {{ $doc->readable_size }} · Uploaded {{ $doc->created_at->diffForHumans() }}
                             </div>
                         </div>
 
                         <div style="display:flex; gap:6px; flex-shrink:0;">
-                            <a href="{{ route('tenant.documents.download', $doc) }}"
+                                     <a href="{{ route('tenant.documents.view', $doc) }}"
                                style="width:32px; height:32px; border-radius:8px; border:1px solid #e5e7eb; display:flex; align-items:center; justify-content:center; color:#6b7280; text-decoration:none;"
-                               title="Download" aria-label="Download document"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/></svg></a>
+                                         title="View" aria-label="View document">View</a>
 
                             <form method="POST" action="{{ route('tenant.documents.destroy', $doc) }}"
                                   onsubmit="return confirm('Delete this document?');" style="display:inline;">

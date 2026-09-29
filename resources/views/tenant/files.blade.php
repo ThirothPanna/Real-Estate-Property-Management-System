@@ -31,47 +31,9 @@
         }
     </style>
 
-<<<<<<< HEAD
     @if (session('status'))
         <div class="files-notice success">{{ session('status') }}</div>
     @endif
-=======
-<div style="max-width: 640px; margin: 40px auto; text-align: center">
-    <div
-        style="
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 20px;
-            border-radius: 50%;
-            background: #f0fdf4;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        "
-    >
-        <svg aria-hidden="true" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M2 10h20"/></svg>
-    </div>
-    <h1 style="font-size: 24px; font-weight: 700; margin-bottom: 8px">
-        File Manager
-    </h1>
-    <p style="color: #6b7280; font-size: 14px; margin-bottom: 20px">
-        Upload and manage your lease agreements, receipts, and documents.
-    </p>
-    <div
-        style="
-            display: inline-block;
-            padding: 8px 20px;
-            background: #f0fdf4;
-            color: #16a34a;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-        "
-    >
-        Coming soon
-    </div>
-</div>
->>>>>>> 097dc3307440cefd7032bd117e20f37ef8ad7549
 
     @if ($errors->any())
         <div class="files-notice error">
@@ -104,10 +66,11 @@
             @forelse ($documents as $document)
                 <div class="file-row">
                     <div class="file-info">
-                        <span class="file-name">{{ $document->original_name }}</span>
+                        <a class="file-name" href="{{ route('tenant.documents.view', $document) }}">{{ $document->original_name }}</a>
                         <div class="file-meta">{{ $document->readable_size }} | Uploaded {{ $document->created_at->format('M d, Y') }}</div>
                     </div>
                     <div class="file-actions">
+                        <a class="files-button" href="{{ route('tenant.documents.view', $document) }}">View</a>
                         <a class="files-button" href="{{ route('tenant.documents.download', $document) }}">Download</a>
                         <form method="POST" action="{{ route('tenant.documents.destroy', $document) }}" onsubmit="return confirm('Delete this document?')">
                             @csrf
@@ -123,15 +86,38 @@
     </section>
 
     <section class="files-panel">
+        <h2>Landlord documents</h2>
+        <div class="files-list">
+            @forelse ($sharedDocuments as $document)
+                <div class="file-row">
+                    <div class="file-info">
+                        <a class="file-name" href="{{ route('tenant.shared-documents.view', $document) }}">{{ $document->title }}</a>
+                        <div class="file-meta">{{ $document->original_name }} | {{ $document->readable_size }} | Shared {{ $document->created_at->format('M d, Y') }}</div>
+                    </div>
+                    <div class="file-actions">
+                        <a class="files-button" href="{{ route('tenant.shared-documents.view', $document) }}">View</a>
+                        <a class="files-button" href="{{ route('tenant.shared-documents.download', $document) }}">Download</a>
+                    </div>
+                </div>
+            @empty
+                <p class="file-empty">Your landlord hasn't shared any documents yet.</p>
+            @endforelse
+        </div>
+    </section>
+
+    <section class="files-panel">
         <h2>Lease agreements</h2>
         <div class="files-list">
             @forelse ($leases as $lease)
                 <div class="file-row">
                     <div class="file-info">
-                        <span class="file-name">{{ $lease->title }}</span>
+                        <a class="file-name" href="{{ route('tenant.leases.view', $lease) }}">{{ $lease->title }}</a>
                         <div class="file-meta">{{ $lease->original_name }} | {{ $lease->readable_size }} | Added {{ $lease->created_at->format('M d, Y') }}</div>
                     </div>
-                    <a class="files-button" href="{{ route('tenant.leases.download', $lease) }}">Download lease</a>
+                    <div class="file-actions">
+                        <a class="files-button" href="{{ route('tenant.leases.view', $lease) }}">View</a>
+                        <a class="files-button" href="{{ route('tenant.leases.download', $lease) }}">Download</a>
+                    </div>
                 </div>
             @empty
                 <p class="file-empty">No lease agreements are available yet.</p>
@@ -145,10 +131,13 @@
             @forelse ($payments as $payment)
                 <div class="file-row">
                     <div class="file-info">
-                        <span class="file-name">Receipt #{{ str_pad($payment->id, 6, '0', STR_PAD_LEFT) }} | {{ $payment->category }}</span>
+                        <a class="file-name" href="{{ route('tenant.receipts.view', $payment) }}">Receipt #{{ str_pad($payment->id, 6, '0', STR_PAD_LEFT) }} | {{ $payment->category }}</a>
                         <div class="file-meta">${{ number_format((float) $payment->amount, 2) }} | Paid {{ $payment->paid_on->format('M d, Y') }}</div>
                     </div>
-                    <a class="files-button" href="{{ route('tenant.receipts.download', $payment) }}">Download receipt</a>
+                    <div class="file-actions">
+                        <a class="files-button" href="{{ route('tenant.receipts.view', $payment) }}">View receipt</a>
+                        <a class="files-button" href="{{ route('tenant.receipts.download', $payment) }}">Download</a>
+                    </div>
                 </div>
             @empty
                 <p class="file-empty">No completed payments have receipts yet.</p>

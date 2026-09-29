@@ -79,6 +79,18 @@
             box-shadow:0 1px 3px rgba(0,0,0,.05);
         }
         .panel h3 { font-size:16px; font-weight:700; margin-bottom:16px; }
+        .rental-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:18px; }
+        .rental-card { min-width:0; overflow:hidden; border:1px solid #e5e7eb; border-radius:12px; background:#fff; }
+        .rental-photo { display:block; width:100%; height:170px; object-fit:cover; background:#f3f4f6; }
+        .rental-info { padding:18px; }
+        .property-name { font-size:16px; font-weight:700; color:#111827; }
+        .property-address, .property-lease { margin-top:5px; color:#6b7280; font-size:13px; line-height:1.5; }
+        .property-rent { margin-top:14px; font-size:20px; font-weight:800; color:#16a34a; }
+        .property-rent span { color:#6b7280; font-size:13px; font-weight:500; }
+        .rental-location { border-top:1px solid #f3f4f6; }
+        .rental-location a { display:block; padding:11px 16px; color:#16a34a; font-size:13px; font-weight:600; text-decoration:none; }
+        .rental-location iframe { display:block; width:100%; height:180px; border:0; }
+        .property-empty { padding:12px 0; color:#6b7280; font-size:14px; }
 
         table { width:100%; border-collapse:collapse; font-size:14px; }
         th {
@@ -151,6 +163,42 @@
             Pay Rent
         </a>
     </div>
+
+    <section class="panel" style="margin-bottom:24px;">
+        <h3>Your Rented Properties</h3>
+        @if ($tenancies->isEmpty())
+            <p class="property-empty">No active rental properties are linked to your account.</p>
+        @else
+            <div class="rental-grid">
+                @foreach ($tenancies as $tenancy)
+                    <article class="rental-card">
+                        <img class="rental-photo" src="{{ $tenancy->property->image_url }}" alt="{{ $tenancy->property->name }}">
+                        <div class="rental-info">
+                            <div class="property-name">{{ $tenancy->property->name }}</div>
+                            <div class="property-address">{{ $tenancy->property->full_address }}</div>
+                            <div class="property-lease">
+                                Lease: {{ $tenancy->lease_start->format('M d, Y') }} – {{ $tenancy->lease_end->format('M d, Y') }}
+                            </div>
+                            <div class="property-rent">
+                                ${{ number_format((float) $tenancy->rent_amount, 2) }}
+                                <span>per month</span>
+                            </div>
+                        </div>
+                        <div class="rental-location">
+                            <a href="{{ $tenancy->property->map_link }}" target="_blank" rel="noopener noreferrer">
+                                Open in Google Maps
+                            </a>
+                            <iframe src="{{ $tenancy->property->map_embed_url }}"
+                                    title="Map showing {{ $tenancy->property->name }}"
+                                    allowfullscreen
+                                    loading="lazy"
+                                    referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                    </article>
+                @endforeach
+            </div>
+        @endif
+    </section>
 
     {{-- Stat cards --}}
     <div class="stat-grid">
@@ -249,9 +297,10 @@
                             </td>
                             <td class="amount-cell">${{ number_format($p->amount, 2) }}</td>
                             <td style="text-align:right;">
-                                <a href="{{ route('tenant.receipts.download', $p) }}" class="btn-receipt" title="Download receipt">
-                                    PDF
+                                <a href="{{ route('tenant.receipts.view', $p) }}" class="btn-receipt" title="View receipt PDF">
+                                    View PDF
                                 </a>
+                                <a href="{{ route('tenant.receipts.download', $p) }}" class="btn-receipt" title="Download receipt">Download</a>
                             </td>
                         </tr>
                     @endforeach

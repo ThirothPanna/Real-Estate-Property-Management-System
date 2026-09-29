@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Lease;
 use App\Models\LeaseDocument;
 use App\Models\MaintenanceRequest;
+use App\Models\Document;
 use App\Models\Payment;
+use App\Models\RentReportingInterest;
+use App\Models\Tenancy;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -22,6 +25,7 @@ class DashboardController extends Controller
         $payments = Payment::where('user_id', $userId)
             ->latest('paid_on')
             ->get();
+        $completedPayments = $payments->where('status', 'completed');
 
         $documents = LeaseDocument::where('user_id', $userId)
             ->latest()
@@ -31,14 +35,23 @@ class DashboardController extends Controller
             ->latest()
             ->get();
 
-        return view('tenant.dashboard', compact('requests', 'payments', 'documents', 'leases'));
+        $rentReportingRegistered = RentReportingInterest::where('user_id', $userId)->exists();
+
+        return view('tenant.dashboard', compact('requests', 'payments', 'completedPayments', 'documents', 'leases', 'rentReportingRegistered'));
     }
 
     public function rent()
     {
         $userId = Auth::id();
 
+        $tenancies = Tenancy::with('property.photos')
+            ->where('user_id', $userId)
+            ->where('status', 'active')
+            ->latest('lease_start')
+            ->get();
+
         $allPayments = Payment::where('user_id', $userId)
+            ->where('status', 'completed')
             ->latest('paid_on')
             ->get();
 
@@ -76,7 +89,8 @@ class DashboardController extends Controller
             'lastPayment',
             'nextRentDue',
             'years',
-            'year'
+            'year',
+            'tenancies'
         ));
     }
 
@@ -103,6 +117,19 @@ class DashboardController extends Controller
     {
         $userId = Auth::id();
 
+        $sharedDocuments = Document::where(function ($query) use ($userId) {
+                $query->whereHas('property.tenancies', function ($tenancies) use ($userId) {
+                    $tenancies->where('user_id', $userId)->where('status', 'active');
+                })->orWhere(function ($unassigned) use ($userId) {
+                    $unassigned->whereNull('property_id')
+                        ->whereHas('landlord.landlordTenancies', function ($tenancies) use ($userId) {
+                            $tenancies->where('user_id', $userId)->where('status', 'active');
+                        });
+                });
+            })
+            ->latest()
+            ->get();
+
         $documents = LeaseDocument::where('user_id', $userId)
             ->latest()
             ->get();
@@ -116,7 +143,7 @@ class DashboardController extends Controller
             ->latest('paid_on')
             ->get();
 
-        return view('tenant.files', compact('documents', 'leases', 'payments'));
+        return view('tenant.files', compact('documents', 'sharedDocuments', 'leases', 'payments'));
     }
 
     public function downloads()

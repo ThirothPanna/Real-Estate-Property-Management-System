@@ -73,4 +73,5 @@ class UtilityProviderController extends Controller
             ->route('tenant.utility-providers.index')
             ->with('success', 'Utility provider removed.');
     }
+
 }

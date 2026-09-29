@@ -9,6 +9,7 @@ use App\Models\Tenancy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Services\StoredDocumentPreview;
 
 class LeaseController extends Controller
 {
@@ -84,5 +85,33 @@ class LeaseController extends Controller
         $lease->delete();
 
         return back()->with('status', 'Lease deleted.');
+    }
+
+    public function view(Lease $lease, StoredDocumentPreview $preview)
+    {
+        if ($lease->landlord_id !== Auth::id()) {
+            abort(403);
+        }
+
+        return $preview->response(
+            $lease->file_path,
+            $lease->original_name,
+            $lease->mime_type,
+            route('landlord.leases.download', $lease)
+        );
+    }
+
+    public function download(Lease $lease)
+    {
+        if ($lease->landlord_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $storage = Storage::disk('public');
+        if (! $storage->exists($lease->file_path)) {
+            abort(404);
+        }
+
+        return $storage->download($lease->file_path, $lease->original_name);
     }
 }

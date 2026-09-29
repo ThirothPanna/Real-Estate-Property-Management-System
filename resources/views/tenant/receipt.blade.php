@@ -198,7 +198,7 @@
     <div class="header">
         <div>
             <div class="brand-name">
-                <img class="brand-logo" src="{{ public_path('images/logo-full-removebg-preview.png') }}" alt="NEKJOUL IMANAGE">
+                NEKJOUL IMANAGE
             </div>
             <div class="brand-tag">Rental Management</div>
         </div>

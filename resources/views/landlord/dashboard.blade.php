@@ -80,6 +80,20 @@
         }
         .chart-panel h3 { font-size: 15px; font-weight: 700; color: #111827; margin-bottom: 4px; }
         .chart-panel .panel-sub { font-size: 12px; color: #6b7280; margin-bottom: 16px; }
+        .recent-payments { margin-bottom:16px; overflow-x:auto; background:#fff; border-radius:16px; padding:22px; box-shadow:0 1px 3px rgba(0,0,0,.05); }
+        .recent-payments-head { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:14px; }
+        .recent-payments h2 { margin:0; color:#111827; font-size:15px; font-weight:700; }
+        .recent-payments-link { display:inline-flex; align-items:center; padding:8px 12px; border:1px solid #d1d5db; border-radius:7px; color:#374151; font-size:13px; font-weight:600; text-decoration:none; }
+        .recent-payments-link:hover { border-color:#86efac; background:#f0fdf4; color:#15803d; }
+        .recent-payments table { width:100%; border-collapse:collapse; font-size:13px; }
+        .recent-payments th { padding:9px 8px; border-bottom:1px solid #e5e7eb; color:#6b7280; font-size:11px; font-weight:600; text-align:left; text-transform:uppercase; }
+        .recent-payments td { padding:12px 8px; border-bottom:1px solid #f3f4f6; color:#374151; }
+        .recent-payments tr:last-child td { border-bottom:0; }
+        .recent-payment-status { display:inline-block; padding:4px 8px; border-radius:20px; background:#f3f4f6; color:#4b5563; font-size:11px; font-weight:600; }
+        .recent-payment-status.completed { background:#dcfce7; color:#166534; }
+        .recent-payment-status.pending { background:#fef3c7; color:#92400e; }
+        .recent-payment-status.failed { background:#fee2e2; color:#991b1b; }
+        .recent-payments-empty { padding:22px 8px; color:#6b7280; font-size:14px; }
 
         .chart-canvas-wrap { position: relative; height: 300px; }
         .chart-canvas-wrap.small { height: 320px; }
@@ -250,6 +264,32 @@
         </div>
 
     </div>
+
+    <section class="recent-payments">
+        <div class="recent-payments-head">
+            <h2>Recent Payments</h2>
+            <a class="recent-payments-link" href="{{ route('landlord.payments.index') }}">View all transactions</a>
+        </div>
+        @if ($recentPayments->isEmpty())
+            <div class="recent-payments-empty">No tenant payments have been recorded yet.</div>
+        @else
+            <table>
+                <thead>
+                    <tr><th>Tenant</th><th>Date</th><th>Status</th><th style="text-align:right;">Amount</th></tr>
+                </thead>
+                <tbody>
+                    @foreach ($recentPayments as $payment)
+                        <tr>
+                            <td>{{ $payment->user->name }}</td>
+                            <td>{{ $payment->paid_on->format('M d, Y') }}</td>
+                            <td><span class="recent-payment-status {{ $payment->status }}">{{ ucfirst($payment->status) }}</span></td>
+                            <td style="text-align:right;font-weight:700;">${{ number_format((float) $payment->amount, 2) }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
+    </section>
 
     {{-- ============ ROW 1 ============ --}}
     <div class="chart-row-1">

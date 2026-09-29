@@ -4,13 +4,37 @@ namespace App\Http\Controllers\Tenant;
 
 use App\Http\Controllers\Controller;
 use App\Models\LeaseDocument;
+use App\Models\Document;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Services\StoredDocumentPreview;
 
 class LeaseDocumentController extends Controller
 {
+    public function viewShared(Document $document, StoredDocumentPreview $preview)
+    {
+        $this->checkSharedDocumentAccess($document);
+
+        return $preview->response(
+            $document->file_path,
+            $document->original_name,
+            $document->mime_type,
+            route('tenant.shared-documents.download', $document)
+        );
+    }
+
+    public function downloadShared(Document $document)
+    {
+        $this->checkSharedDocumentAccess($document);
+
+        $storage = Storage::disk('public');
+        abort_unless($storage->exists($document->file_path), 404, 'File not found on disk.');
+
+        return $storage->download($document->file_path, $document->original_name);
+    }
+
     /**
      * Upload a new lease document.
      */
@@ -69,6 +93,22 @@ class LeaseDocumentController extends Controller
         );
     }
 
+    public function view(LeaseDocument $document, StoredDocumentPreview $preview)
+    {
+        $this->checkOwnership($document);
+
+        if (! Storage::disk('public')->exists($document->file_path)) {
+            abort(404, 'File not found on disk.');
+        }
+
+        return $preview->response(
+            $document->file_path,
+            $document->original_name,
+            $document->mime_type,
+            route('tenant.documents.download', $document)
+        );
+    }
+
     /**
      * Delete a lease document.
      */
@@ -91,5 +131,18 @@ class LeaseDocumentController extends Controller
         if ($document->user_id !== Auth::id()) {
             abort(403);
         }
+    }
+
+    private function checkSharedDocumentAccess(Document $document): void
+    {
+        $hasActiveTenancy = $document->property_id
+            ? $document->property()->whereHas('tenancies', function ($query) {
+                $query->where('user_id', Auth::id())->where('status', 'active');
+            })->exists()
+            : $document->landlord()->whereHas('landlordTenancies', function ($query) {
+                $query->where('user_id', Auth::id())->where('status', 'active');
+            })->exists();
+
+        abort_unless($hasActiveTenancy, 403);
     }
 }

@@ -12,18 +12,23 @@ use App\Http\Controllers\Landlord\ReportController;
 use App\Http\Controllers\Landlord\RequestController as LandlordRequestController;
 use App\Http\Controllers\Landlord\SettingsController as LandlordSettingsController;
 use App\Http\Controllers\Landlord\TenantController;
+use App\Http\Controllers\Landlord\UtilityRequestController as LandlordUtilityRequestController;
+use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\Tenant\DashboardController as TenantDashboard;
+use App\Http\Controllers\Tenant\AvailablePropertyController;
 use App\Http\Controllers\Tenant\LeaseController as TenantLeaseController;
 use App\Http\Controllers\Tenant\LeaseDocumentController;
 use App\Http\Controllers\Tenant\NotificationController;
 use App\Http\Controllers\Tenant\PaymentController as TenantPaymentController;
 use App\Http\Controllers\Tenant\ProfileController;
 use App\Http\Controllers\Tenant\ReceiptController;
+use App\Http\Controllers\Tenant\RentReportingController;
 use App\Http\Controllers\Tenant\RequestController as TenantRequestController;
 use App\Http\Controllers\Tenant\SettingsController as TenantSettingsController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Tenant\UtilityProviderController;
+use App\Http\Controllers\Tenant\UtilityRequestController as TenantUtilityRequestController;
 use App\Http\Controllers\ApplicationController;
 Route::get('/', function () {
     if (Auth::check()) {
@@ -35,13 +40,13 @@ Route::get('/', function () {
     return view('landing');
 });
 
-Route::get('/auth/{provider}/redirect', function ($provider) {
-    return redirect()->route('login');
-})->name('social.redirect');
+Route::get('/auth/{provider}/redirect', [SocialiteController::class, 'redirect'])
+    ->whereIn('provider', ['google', 'facebook'])
+    ->name('social.redirect');
 
-Route::get('/auth/{provider}/callback', function ($provider) {
-    return redirect()->route('login');
-})->name('social.callback');
+Route::get('/auth/{provider}/callback', [SocialiteController::class, 'callback'])
+    ->whereIn('provider', ['google', 'facebook'])
+    ->name('social.callback');
 
 /* ================= TENANT AREA ================= */
 Route::middleware(['auth', 'role:tenant'])
@@ -52,14 +57,19 @@ Route::middleware(['auth', 'role:tenant'])
     // Sidebar pages
     Route::get('/dashboard', [TenantDashboard::class, 'index'])->name('dashboard');
     Route::get('/rent', [TenantDashboard::class, 'rent'])->name('rent');
+    Route::get('/properties', [AvailablePropertyController::class, 'index'])->name('properties.index');
+    Route::get('/properties/{property}', [AvailablePropertyController::class, 'show'])->name('properties.show');
     Route::get('/requests', [TenantDashboard::class, 'requests'])->name('requests');
-    Route::get('/utilities', [TenantDashboard::class, 'utilities'])->name('utilities');
+    Route::get('/utilities', [UtilityProviderController::class, 'index'])->name('utilities');
+    Route::get('/utility-requests', [TenantUtilityRequestController::class, 'index'])->name('utility-requests.index');
+    Route::post('/utility-requests', [TenantUtilityRequestController::class, 'store'])->name('utility-requests.store');
     // Route::get('/applications', [TenantDashboard::class, 'applications'])->name('applications');
     Route::get('/files', [TenantDashboard::class, 'files'])->name('files');
     Route::get('/downloads', [TenantDashboard::class, 'downloads'])->name('downloads');
 
     // Notifications
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
+    Route::get('/notifications/{notification}', [NotificationController::class, 'show'])->name('notifications.show');
     Route::post('/notifications/{notification}/read',   [NotificationController::class, 'markRead'])->name('notifications.read');
     Route::post('/notifications/{notification}/unread', [NotificationController::class, 'markUnread'])->name('notifications.unread');
     Route::post('/notifications/{notification}/delete', [NotificationController::class, 'destroy'])->name('notifications.destroy');
@@ -69,6 +79,9 @@ Route::middleware(['auth', 'role:tenant'])
 
     // Lease documents (uploaded by tenant)
     Route::post('/documents', [LeaseDocumentController::class, 'store'])->name('documents.store');
+    Route::get('/shared-documents/{document}/view', [LeaseDocumentController::class, 'viewShared'])->name('shared-documents.view');
+    Route::get('/shared-documents/{document}/download', [LeaseDocumentController::class, 'downloadShared'])->name('shared-documents.download');
+    Route::get('/documents/{document}/view', [LeaseDocumentController::class, 'view'])->name('documents.view');
     Route::get('/documents/{document}/download', [LeaseDocumentController::class, 'download'])->name('documents.download');
     Route::delete('/documents/{document}', [LeaseDocumentController::class, 'destroy'])->name('documents.destroy');
 
@@ -84,22 +97,25 @@ Route::middleware(['auth', 'role:tenant'])
     // Maintenance requests (tenant — submit)
     Route::post('/requests', [TenantRequestController::class, 'store'])->name('requests.store');
 
-    // Payments
-    Route::get('/pay', [TenantPaymentController::class, 'create'])->name('pay');
-    Route::post('/payments', [TenantPaymentController::class, 'store'])->name('payments.store');
-
-    // Receipts
-    Route::get('/receipts/{payment}/download', [ReceiptController::class, 'download'])->name('receipts.download');
-
-    // Leases
-    Route::get('/leases/{lease}/download', [TenantLeaseController::class, 'download'])->name('leases.download');
-    Route::post('/leases/{lease}/acknowledge', [TenantLeaseController::class, 'acknowledge'])->name('leases.acknowledge');
-
-    // Utility providers
+    // Utility providers (tenant-managed contacts)
     Route::get('/utility-providers', [UtilityProviderController::class, 'index'])->name('utility-providers.index');
     Route::post('/utility-providers', [UtilityProviderController::class, 'store'])->name('utility-providers.store');
     Route::patch('/utility-providers/{utilityProvider}', [UtilityProviderController::class, 'update'])->name('utility-providers.update');
     Route::delete('/utility-providers/{utilityProvider}', [UtilityProviderController::class, 'destroy'])->name('utility-providers.destroy');
+
+    // Payments
+    Route::get('/pay', [TenantPaymentController::class, 'create'])->name('pay');
+    Route::post('/payments', [TenantPaymentController::class, 'store'])->name('payments.store');
+    Route::post('/rent-reporting/interest', [RentReportingController::class, 'store'])->name('rent-reporting.store');
+
+    // Receipts
+    Route::get('/receipts/{payment}/view', [ReceiptController::class, 'view'])->name('receipts.view');
+    Route::get('/receipts/{payment}/download', [ReceiptController::class, 'download'])->name('receipts.download');
+
+    // Leases
+    Route::get('/leases/{lease}/view', [TenantLeaseController::class, 'view'])->name('leases.view');
+    Route::get('/leases/{lease}/download', [TenantLeaseController::class, 'download'])->name('leases.download');
+    Route::post('/leases/{lease}/acknowledge', [TenantLeaseController::class, 'acknowledge'])->name('leases.acknowledge');
 
     // Application routes for tenants
     Route::get('/applications', [ApplicationController::class, 'index'])->name('applications');
@@ -144,6 +160,8 @@ Route::middleware(['auth', 'role:landlord'])
 
     // Payments
     Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
+    Route::get('/payments/{payment}/receipt/view', [PaymentController::class, 'viewReceipt'])->name('payments.receipt.view');
+    Route::get('/payments/{payment}/receipt/download', [PaymentController::class, 'downloadReceipt'])->name('payments.receipt.download');
 
     // Settings
     Route::get('/settings', [LandlordSettingsController::class, 'index'])->name('settings');
@@ -162,16 +180,25 @@ Route::middleware(['auth', 'role:landlord'])
 
     // Documents
     Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index');
+    Route::get('/documents/{document}/view', [DocumentController::class, 'view'])->name('documents.view');
+    Route::get('/documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
     Route::post('/documents', [DocumentController::class, 'store'])->name('documents.store');
     Route::delete('/documents/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy');
 
     // Leases
     Route::get('/leases', [LandlordLeaseController::class, 'index'])->name('leases.index');
+    Route::get('/leases/{lease}/view', [LandlordLeaseController::class, 'view'])->name('leases.view');
+    Route::get('/leases/{lease}/download', [LandlordLeaseController::class, 'download'])->name('leases.download');
     Route::post('/leases', [LandlordLeaseController::class, 'store'])->name('leases.store');
     Route::delete('/leases/{lease}', [LandlordLeaseController::class, 'destroy'])->name('leases.destroy');
 
+    // Utility requests
+    Route::get('/utility-requests', [LandlordUtilityRequestController::class, 'index'])->name('utility-requests.index');
+    Route::patch('/utility-requests/{utilityRequest}', [LandlordUtilityRequestController::class, 'update'])->name('utility-requests.update');
+
     // Notifications ← NEW
     Route::get('/notifications', [LandlordNotificationController::class, 'index'])->name('notifications');
+    Route::get('/notifications/{notification}', [LandlordNotificationController::class, 'show'])->name('notifications.show');
     Route::post('/notifications/{notification}/read',   [LandlordNotificationController::class, 'markRead'])->name('notifications.read');
     Route::post('/notifications/{notification}/unread', [LandlordNotificationController::class, 'markUnread'])->name('notifications.unread');
     Route::post('/notifications/{notification}/delete', [LandlordNotificationController::class, 'destroy'])->name('notifications.destroy');

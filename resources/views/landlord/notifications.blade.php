@@ -93,7 +93,9 @@
         .notif-icon.lease   { background:#dbeafe; }
 
         .notif-content { flex:1; min-width:0; }
-        .notif-title { font-size:15px; font-weight:600; color:#111827; margin-bottom:4px; }
+        .notif-title { font-size:15px; font-weight:600; margin-bottom:4px; }
+        .notif-title a { color:#111827; text-decoration:none; }
+        .notif-title a:hover { color:#15803d; text-decoration:underline; }
         .notif-body  { font-size:13px; color:#6b7280; line-height:1.5; word-wrap:break-word; }
         .notif-meta  { font-size:12px; color:#9ca3af; margin-top:6px; }
 
@@ -200,7 +202,7 @@
                     </div>
 
                     <div class="notif-content">
-                        <div class="notif-title">{{ $n->title }}</div>
+                        <div class="notif-title"><a href="{{ route('landlord.notifications.show', $n) }}">{{ $n->title }}</a></div>
                         @if ($n->body)
                             <div class="notif-body">{{ $n->body }}</div>
                         @endif

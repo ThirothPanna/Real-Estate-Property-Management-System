@@ -57,3 +57,22 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Payments and Social Sign-In
+
+Copy the following provider settings into `.env`; never commit live credentials:
+
+```dotenv
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GOOGLE_REDIRECT_URI="${APP_URL}/auth/google/callback"
+FACEBOOK_CLIENT_ID=
+FACEBOOK_CLIENT_SECRET=
+FACEBOOK_REDIRECT_URI="${APP_URL}/auth/facebook/callback"
+```
+
+Register the Google and Facebook callback URLs with their OAuth apps.
+
+The rent payment form is a demonstration flow. It records a completed payment in the application but does not charge or authorize a real card. Use demonstration card details only.
+
+Rent Reporting currently records tenant interest only. No payment history is transmitted to a credit bureau; that requires a reporting partner and a separate consent/data-sharing integration.
