@@ -205,7 +205,10 @@ Route::middleware(['auth', 'role:landlord'])
     Route::post('/notifications/mark-all-read',         [LandlordNotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
     Route::post('/notifications/mark-all-unread',       [LandlordNotificationController::class, 'markAllUnread'])->name('notifications.markAllUnread');
     Route::post('/notifications/delete-all',            [LandlordNotificationController::class, 'destroyAll'])->name('notifications.destroyAll');
-
 });
+
+Route::post('/switch-account', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'switchAccount'])
+    ->middleware('auth')
+    ->name('switch-account');
 
 require __DIR__.'/auth.php';

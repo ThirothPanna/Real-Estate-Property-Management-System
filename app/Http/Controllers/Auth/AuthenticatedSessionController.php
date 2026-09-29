@@ -26,6 +26,10 @@ class AuthenticatedSessionController extends Controller
         /** @var \App\Models\User $user */
         $user = $request->user();
 
+        $accountIds = $request->session()->get('account_switch_ids', []);
+        $accountIds[] = $user->id;
+        $request->session()->put('account_switch_ids', array_values(array_unique($accountIds)));
+
         return redirect()->intended(
             route($user->dashboardRoute(), absolute: false)
         );
@@ -40,7 +44,11 @@ class AuthenticatedSessionController extends Controller
 
     public function addAccount(Request $request): RedirectResponse
     {
+        $accountIds = $request->session()->get('account_switch_ids', []);
+        $accountIds[] = $request->user()->id;
+
         $this->endSession($request);
+        $request->session()->put('account_switch_ids', array_values(array_unique($accountIds)));
 
         return redirect()->route('login');
     }
@@ -52,5 +60,23 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
+    }
+    public function switchAccount(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'user_id' => ['required', 'integer'],
+        ]);
+
+        $accountIds = collect($request->session()->get('account_switch_ids', []))
+            ->map(fn ($id) => (int) $id);
+
+        abort_unless($accountIds->contains($validated['user_id']), 403);
+
+        $targetUser = \App\Models\User::findOrFail($validated['user_id']);
+
+        Auth::login($targetUser);
+        $request->session()->regenerate();
+
+        return redirect()->route($targetUser->dashboardRoute());
     }
 }

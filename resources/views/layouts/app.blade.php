@@ -145,45 +145,52 @@
             display:none; position:absolute; right:0; top:calc(100% + 8px);
             background:#fff; border:1px solid #e5e7eb; border-radius:14px;
             box-shadow:0 12px 32px rgba(0,0,0,.12);
-            width:340px; padding:24px 0; z-index:200;
+            width:340px; padding:0; z-index:200; overflow:hidden;
         }
         .user-menu.open { display:block; }
-        .user-menu-header { display:flex; align-items:center; gap:16px; padding:0 24px 20px; }
-
-        .user-menu-avatar {
-            width:56px; height:56px; border-radius:50%;
-            background:#34d399; color:#fff; flex-shrink:0;
-            display:flex; align-items:center; justify-content:center;
-            font-weight:600; font-size:20px;
-            overflow:hidden;
+        .account-switch-section { padding:18px 0 8px; }
+        .account-switch-title {
+            padding:0 20px 10px; color:#6b7280; font-size:11px;
+            font-weight:700; letter-spacing:.08em; text-transform:uppercase;
         }
-        .user-menu-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
-
-        .user-menu-info { display:flex; flex-direction:column; gap:2px; }
-        .user-menu-role { font-size:13px; color:#9ca3af; }
-        .user-menu-name { font-size:17px; font-weight:600; color:#111827; }
-        .user-menu-email { font-size:14px; color:#3f9c3a; }
+        .account-switch-list { max-height:260px; overflow-y:auto; }
+        .account-switch-form { margin:0; }
+        .account-switch-item {
+            display:flex; align-items:center; gap:12px; width:100%;
+            padding:10px 20px; border:0; background:#fff; color:#111827;
+            text-align:left; cursor:pointer;
+        }
+        .account-switch-item:hover { background:#f9fafb; }
+        .account-switch-item.active { cursor:default; }
+        .account-switch-avatar {
+            width:40px; height:40px; flex:0 0 40px; border-radius:50%;
+            display:flex; align-items:center; justify-content:center;
+            background:#dcfce7; color:#15803d; font-size:13px; font-weight:700;
+        }
+        .account-switch-info { min-width:0; flex:1; display:flex; flex-direction:column; gap:2px; }
+        .account-switch-name { overflow:hidden; font-size:14px; font-weight:600; text-overflow:ellipsis; white-space:nowrap; }
+        .account-switch-email { overflow:hidden; color:#6b7280; font-size:12px; text-overflow:ellipsis; white-space:nowrap; }
+        .account-switch-status { flex-shrink:0; color:#15803d; font-size:12px; font-weight:600; }
+        .account-switch-add { color:#111827; font-size:14px; }
+        .account-switch-add svg { flex-shrink:0; color:#374151; }
+        .user-menu-divider { height:1px; background:#e5e7eb; margin:0; }
+        .user-menu-actions { padding:6px 0; }
 
         .user-menu-settings {
             display:block;
-            margin:8px 24px 18px;
-            padding:10px 20px;
-            border:1px solid #d1d5db;
+            margin:0;
+            padding:14px 20px;
             background:#fff;
             color:#111827;
-            border-radius:8px;
             font-size:14px;
-            font-weight:600;
-            cursor:pointer;
-            text-align:center;
+            font-weight:500;
             text-decoration:none;
         }
         .user-menu-settings:hover { background:#f9fafb; }
 
-        .user-menu-divider { height:1px; background:#e5e7eb; margin:0 24px; }
         .user-menu-item {
             display:flex; align-items:center; gap:16px;
-            padding:16px 24px; font-size:15px; color:#111827;
+            padding:14px 20px; font-size:14px; color:#111827;
             cursor:pointer; text-decoration:none; background:none;
             border:none; width:100%; text-align:left;
         }
@@ -434,51 +441,68 @@
                 </div>
 
                 <div class="user-menu" id="userMenu">
-                    <div class="user-menu-header">
-                        <div class="user-menu-avatar">
-                            <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}">
+                    <div class="account-switch-section">
+                        <div class="account-switch-title">Switch account</div>
+                        <div class="account-switch-list">
+                            @foreach ($switchableAccounts as $account)
+                                <form method="POST" action="{{ route('switch-account') }}" class="account-switch-form">
+                                    @csrf
+                                    <input type="hidden" name="user_id" value="{{ $account->id }}">
+                                    <button
+                                        type="submit"
+                                        class="account-switch-item{{ $account->is(auth()->user()) ? ' active' : '' }}"
+                                        @if ($account->is(auth()->user())) disabled aria-current="page" @endif
+                                    >
+                                        <span class="account-switch-avatar">
+                                            {{ collect(explode(' ', trim($account->name)))->filter()->take(2)->map(fn ($part) => mb_substr($part, 0, 1))->implode('') }}
+                                        </span>
+                                        <span class="account-switch-info">
+                                            <span class="account-switch-name">{{ $account->name }}</span>
+                                            <span class="account-switch-email">{{ $account->email }}</span>
+                                        </span>
+                                        @if ($account->is(auth()->user()))
+                                            <span class="account-switch-status">Active</span>
+                                        @endif
+                                    </button>
+                                </form>
+                            @endforeach
                         </div>
-                        <div class="user-menu-info">
-                            <span class="user-menu-role">{{ auth()->user()->isLandlord() ? 'Landlord' : 'Tenant' }}</span>
-                            <span class="user-menu-name">{{ auth()->user()->name }}</span>
-                            <span class="user-menu-email">{{ auth()->user()->email }}</span>
-                        </div>
+
+                        <form method="POST" action="{{ route('account.add') }}">
+                            @csrf
+                            <button type="submit" class="user-menu-item account-switch-add">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <line x1="19" y1="8" x2="19" y2="14"/>
+                                    <line x1="22" y1="11" x2="16" y2="11"/>
+                                </svg>
+                                <span>Add another account</span>
+                            </button>
+                        </form>
                     </div>
 
                     @if (auth()->user()->isLandlord())
-                        <a href="{{ route('landlord.settings') }}" class="user-menu-settings">Settings</a>
+                        <a href="{{ route('landlord.settings') }}" class="user-menu-settings">Profile</a>
                     @else
-                        <a href="{{ route('tenant.settings') }}" class="user-menu-settings">Settings</a>
+                        <a href="{{ route('tenant.settings') }}" class="user-menu-settings">Profile</a>
                     @endif
 
                     <div class="user-menu-divider"></div>
 
-                    <form method="POST" action="{{ route('account.add') }}">
-                        @csrf
-                        <button type="submit" class="user-menu-item">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                                <circle cx="9" cy="7" r="4"/>
-                                <line x1="19" y1="8" x2="19" y2="14"/>
-                                <line x1="22" y1="11" x2="16" y2="11"/>
-                            </svg>
-                            <span>Add another account</span>
-                        </button>
-                    </form>
-
-                    <div class="user-menu-divider"></div>
-
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="user-menu-item">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                                <polyline points="16 17 21 12 16 7"/>
-                                <line x1="21" y1="12" x2="9" y2="12"/>
-                            </svg>
-                            <span>Log out</span>
-                        </button>
-                    </form>
+                    <div class="user-menu-actions">
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="user-menu-item">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                    <polyline points="16 17 21 12 16 7"/>
+                                    <line x1="21" y1="12" x2="9" y2="12"/>
+                                </svg>
+                                <span>Log out</span>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

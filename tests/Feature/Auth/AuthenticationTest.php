@@ -54,12 +54,52 @@ class AuthenticationTest extends TestCase
 
     public function test_users_can_add_another_account(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => 'tenant']);
+        $anotherUser = User::factory()->create(['role' => 'tenant']);
 
         $response = $this->actingAs($user)->post(route('account.add'));
 
         $this->assertGuest();
         $response->assertRedirect(route('login'));
-        $this->get(route('login'))->assertOk();
+
+        $this->post(route('login'), [
+            'email' => $anotherUser->email,
+            'password' => 'password',
+        ])->assertRedirect(route('tenant.dashboard', absolute: false));
+
+        $this->assertAuthenticatedAs($anotherUser);
+        $this->assertSame(
+            [$user->id, $anotherUser->id],
+            session('account_switch_ids')
+        );
+
+        $this->get(route('tenant.dashboard'))
+            ->assertOk()
+            ->assertSee('Switch account')
+            ->assertSee($user->email)
+            ->assertSee($anotherUser->email)
+            ->assertSee('Active');
+
+        $this->post(route('switch-account'), ['user_id' => $user->id])
+            ->assertRedirect(route('tenant.dashboard', absolute: false));
+
+        $this->assertAuthenticatedAs($user);
+        $this->get(route('tenant.dashboard'))
+            ->assertOk()
+            ->assertSee($user->email)
+            ->assertSee($anotherUser->email)
+            ->assertSee('Active');
+    }
+
+    public function test_users_cannot_switch_to_an_unlinked_account(): void
+    {
+        $user = User::factory()->create(['role' => 'tenant']);
+        $unlinkedUser = User::factory()->create(['role' => 'tenant']);
+
+        $this->actingAs($user)
+            ->post(route('switch-account'), ['user_id' => $unlinkedUser->id])
+            ->assertForbidden();
+
+        $this->assertAuthenticatedAs($user);
     }
 }
