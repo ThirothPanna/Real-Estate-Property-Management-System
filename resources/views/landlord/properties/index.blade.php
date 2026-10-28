@@ -43,7 +43,7 @@
                              style="width:100%; height:100%; object-fit:cover; display:block;">
 
                         <span style="position:absolute; top:12px; right:12px; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:600; {{ $prop->status_badge }}">
-                            {{ ucfirst($prop->status) }}
+                            {{ $prop->status === 'available' ? 'Available' : 'Unavailable' }}
                         </span>
                     </div>
 

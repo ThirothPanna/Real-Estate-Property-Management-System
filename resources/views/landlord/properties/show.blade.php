@@ -44,7 +44,7 @@
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
                 <h3 style="margin:0;">Details</h3>
                 <span style="padding:6px 14px; border-radius:20px; font-size:13px; font-weight:600; {{ $property->status_badge }}">
-                    {{ ucfirst($property->status) }}
+                    {{ $property->status === 'available' ? 'Available' : 'Unavailable' }}
                 </span>
             </div>
 

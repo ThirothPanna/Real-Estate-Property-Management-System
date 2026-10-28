@@ -14,13 +14,14 @@
         .available-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap:18px; }
         .available-card { min-width:0; overflow:hidden; border:1px solid #e5e7eb; border-radius:8px; background:#fff; }
         .available-image { display:block; width:100%; height:170px; object-fit:cover; background:#f3f4f6; }
+        .available-status { display:inline-block; margin-bottom:8px; padding:4px 9px; border-radius:999px; background:#dcfce7; color:#15803d; font-size:12px; font-weight:700; }
         .available-info { padding:17px; }
         .available-name { margin:0; color:#111827; font-size:16px; font-weight:700; }
         .available-address { margin:5px 0 13px; color:#6b7280; font-size:13px; line-height:1.5; }
         .available-specs { display:flex; flex-wrap:wrap; gap:12px; color:#4b5563; font-size:13px; }
         .available-price { margin-top:14px; color:#15803d; font-size:21px; font-weight:800; }
         .available-price span { color:#6b7280; font-size:13px; font-weight:500; }
-        .available-actions { display:flex; justify-content:space-between; align-items:center; gap:12px; border-top:1px solid #f3f4f6; padding:12px 17px; }
+        .available-actions { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; border-top:1px solid #f3f4f6; padding:12px 17px; }
         .available-map { color:#4b5563; font-size:13px; font-weight:600; text-decoration:none; }
         .available-details { color:#15803d; font-size:13px; font-weight:700; text-decoration:none; }
         .available-empty { padding:42px 18px; border:1px solid #e5e7eb; background:#fff; text-align:center; color:#6b7280; }
@@ -51,6 +52,7 @@
                     <article class="available-card">
                         <img class="available-image" src="{{ $property->image_url }}" alt="{{ $property->name }}">
                         <div class="available-info">
+                            <span class="available-status">Available</span>
                             <h2 class="available-name">{{ $property->name }}</h2>
                             <p class="available-address">{{ $property->full_address }}</p>
                             <div class="available-specs">
@@ -68,6 +70,7 @@
                         </div>
                         <div class="available-actions">
                             <a class="available-map" href="{{ $property->map_link }}" target="_blank" rel="noopener noreferrer">Location</a>
+                            <a class="available-map" href="{{ route('tenant.inquiries.show', $property) }}">Message landlord</a>
                             <a class="available-details" href="{{ route('tenant.properties.show', $property) }}">View details</a>
                         </div>
                     </article>

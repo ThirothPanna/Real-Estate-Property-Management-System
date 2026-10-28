@@ -42,6 +42,11 @@ class Tenancy extends Model
         return $this->belongsTo(Property::class);
     }
 
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
+
     public function getStatusBadgeAttribute(): string
     {
         return match ($this->status) {

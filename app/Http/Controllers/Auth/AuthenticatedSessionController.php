@@ -27,11 +27,12 @@ class AuthenticatedSessionController extends Controller
         $user = $request->user();
 
         $accountIds = $request->session()->get('account_switch_ids', []);
+        $isSwitchingAccount = !empty($accountIds);
         $accountIds[] = $user->id;
         $request->session()->put('account_switch_ids', array_values(array_unique($accountIds)));
 
         return redirect()->intended(
-            route($user->dashboardRoute(), absolute: false)
+            route($isSwitchingAccount ? $user->dashboardRoute() : 'dashboard', absolute: false)
         );
     }
 

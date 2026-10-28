@@ -253,6 +253,9 @@
             <a href="{{ route('landlord.tenants.index') }}" class="nav-item {{ request()->routeIs('landlord.tenants.*') ? 'active' : '' }}">
                 <span class="nav-icon">◎</span><span class="nav-label">Tenants</span>
             </a>
+            <a href="{{ route('landlord.messages.index') }}" class="nav-item {{ request()->routeIs('landlord.messages.*') ? 'active' : '' }}">
+                <span class="nav-icon">&#9993;</span><span class="nav-label">Messages</span>
+            </a>
             <a href="{{ route('landlord.requests.index') }}" class="nav-item {{ request()->routeIs('landlord.requests.*') ? 'active' : '' }}">
                 <span class="nav-icon">✂</span><span class="nav-label">Requests</span>
             </a>
@@ -278,6 +281,9 @@
             {{-- ========== TENANT SIDEBAR ========== --}}
             <a href="{{ route('tenant.dashboard') }}" class="nav-item {{ request()->routeIs('tenant.dashboard') ? 'active' : '' }}">
                 <span class="nav-icon">▦</span><span class="nav-label">Dashboard</span>
+            </a>
+            <a href="{{ route('tenant.messages.index') }}" class="nav-item {{ request()->routeIs('tenant.messages.*') ? 'active' : '' }}">
+                <span class="nav-icon">&#9993;</span><span class="nav-label">Messages</span>
             </a>
             <a href="{{ route('tenant.rent') }}" class="nav-item {{ request()->routeIs('tenant.rent') ? 'active' : '' }}">
                 <span class="nav-icon">$</span><span class="nav-label">Rent</span>
@@ -520,6 +526,41 @@
 </div>
 
 <script>
+    const csrfRefreshUrl = @json(route('session.csrf'));
+    const logoutUrl = @json(route('logout'));
+    const homeUrl = @json(url('/'));
+
+    document.querySelectorAll('form').forEach((form) => {
+        if (form.action !== logoutUrl) return;
+
+        form.addEventListener('submit', async (event) => {
+            if (form.dataset.csrfRefreshed === 'true') return;
+            event.preventDefault();
+
+            try {
+                const response = await fetch(csrfRefreshUrl, {
+                    credentials: 'same-origin',
+                    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                });
+                if (!response.ok) throw new Error('Could not refresh the session token.');
+
+                const session = await response.json();
+                if (!session.authenticated) {
+                    window.location.assign(homeUrl);
+                    return;
+                }
+
+                const tokenField = form.querySelector('input[name="_token"]');
+                if (tokenField) tokenField.value = session.token;
+            } catch (error) {
+                // Keep the normal POST behavior if the refresh endpoint is unreachable.
+            }
+
+            form.dataset.csrfRefreshed = 'true';
+            form.requestSubmit();
+        });
+    });
+
     const sidebar = document.getElementById('sidebar');
     const menuToggle = document.getElementById('menuToggle');
     menuToggle.addEventListener('click', () => {

@@ -30,6 +30,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Tenant\UtilityProviderController;
 use App\Http\Controllers\Tenant\UtilityRequestController as TenantUtilityRequestController;
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\MessageController;
 Route::get('/', function () {
     if (Auth::check()) {
         /** @var \App\Models\User $user */
@@ -59,6 +60,12 @@ Route::middleware(['auth', 'role:tenant'])
     Route::get('/rent', [TenantDashboard::class, 'rent'])->name('rent');
     Route::get('/properties', [AvailablePropertyController::class, 'index'])->name('properties.index');
     Route::get('/properties/{property}', [AvailablePropertyController::class, 'show'])->name('properties.show');
+    Route::get('/properties/{property}/message', [MessageController::class, 'showPropertyInquiry'])->name('inquiries.show');
+    Route::post('/properties/{property}/message', [MessageController::class, 'storePropertyInquiry'])->name('inquiries.store');
+    Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
+    Route::get('/messages/{tenancy}/profile', [MessageController::class, 'profile'])->name('messages.profile');
+    Route::get('/messages/{tenancy}', [MessageController::class, 'show'])->name('messages.show');
+    Route::post('/messages/{tenancy}', [MessageController::class, 'store'])->name('messages.store');
     Route::get('/requests', [TenantDashboard::class, 'requests'])->name('requests');
     Route::get('/utilities', [UtilityProviderController::class, 'index'])->name('utilities');
     Route::get('/utility-requests', [TenantUtilityRequestController::class, 'index'])->name('utility-requests.index');
@@ -131,6 +138,14 @@ Route::middleware(['auth', 'role:landlord'])
     ->group(function () {
 
     Route::get('/dashboard', [LandlordDashboard::class, 'index'])->name('dashboard');
+    Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
+    Route::get('/messages/{tenancy}/profile', [MessageController::class, 'profile'])->name('messages.profile');
+    Route::get('/messages/{tenancy}', [MessageController::class, 'show'])->name('messages.show');
+    Route::post('/messages/{tenancy}', [MessageController::class, 'store'])->name('messages.store');
+
+    // Reply to a tenant's inquiry about one of this landlord's properties.
+    Route::get('/inquiries/{property}/{tenant}', [MessageController::class, 'showLandlordInquiry'])->name('inquiries.show');
+    Route::post('/inquiries/{property}/{tenant}', [MessageController::class, 'storeLandlordInquiry'])->name('inquiries.store');
 
     // Properties
     Route::get('/properties', [PropertyController::class, 'index'])->name('properties.index');
@@ -212,3 +227,23 @@ Route::post('/switch-account', [\App\Http\Controllers\Auth\AuthenticatedSessionC
     ->name('switch-account');
 
 require __DIR__.'/auth.php';
+
+Route::get('/session/csrf', function () {
+    return response()->json([
+        'token' => csrf_token(),
+        'authenticated' => Auth::check(),
+    ]);
+})->middleware('throttle:30,1')->name('session.csrf');
+
+// Keep the standard Laravel destinations available for shared auth flows.
+Route::middleware('auth')->group(function () {
+    Route::get('/messages/{message}/attachment', [MessageController::class, 'attachment'])->name('messages.attachments.show');
+
+    Route::get('/dashboard', function () {
+        return redirect()->route(Auth::user()->dashboardRoute());
+    })->name('dashboard');
+
+    Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [\App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
+});
